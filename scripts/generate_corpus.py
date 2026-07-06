@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a massive, advanced knowledge corpus from templates and seed data."""
+"""Generate a massive, connected knowledge corpus with rich document relationships."""
 
 from __future__ import annotations
 
@@ -19,73 +19,15 @@ from typing import Any
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from corpus_templates import DOCUMENT_TYPES, TOPICS, Topic
-
-CODE_SNIPPETS = {
-    "python": '''```python
-from typing import Any
-
-class {class_name}:
-    """{docstring}"""
-
-    def __init__(self, config: dict[str, Any]) -> None:
-        self._config = config
-        self._cache: dict[str, Any] = {{}}
-
-    def process(self, payload: dict[str, Any]) -> dict[str, Any]:
-        key = payload.get("id", "default")
-        if key in self._cache:
-            return self._cache[key]
-        result = {{"status": "ok", "topic": "{topic}", "variant": {variant}}}
-        self._cache[key] = result
-        return result
-```''',
-    "typescript": '''```typescript
-interface {interface_name}Config {{
-  topic: string;
-  variant: number;
-  retries: number;
-}}
-
-export async function {function_name}(config: {interface_name}Config): Promise<Record<string, unknown>> {{
-  const backoff = Math.min(1000 * 2 ** config.retries, 30000);
-  return {{
-    status: "ok",
-    topic: config.topic,
-    variant: config.variant,
-    backoffMs: backoff,
-  }};
-}}
-```''',
-    "sql": '''```sql
-CREATE TABLE IF NOT EXISTS {table_name} (
-    id          BIGSERIAL PRIMARY KEY,
-    topic       TEXT NOT NULL,
-    variant     INTEGER NOT NULL DEFAULT {variant},
-    payload     JSONB NOT NULL,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX idx_{table_name}_topic ON {table_name} (topic);
-```''',
-    "yaml": '''```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {service_name}
-spec:
-  replicas: {variant}
-  template:
-    spec:
-      containers:
-        - name: app
-          image: zypher/{service_name}:{variant}
-          resources:
-            requests:
-              cpu: "250m"
-              memory: "512Mi"
-```''',
-}
+from brain_schema import (
+    DOC_TYPE_RELATIONSHIPS,
+    DOCUMENT_TYPES,
+    KNOWLEDGE_HUBS,
+    LANGUAGE_CATEGORIES,
+    RELATIONSHIP_TYPES,
+)
+from code_snippets import CODE_SNIPPETS, DEFAULT_CODE_LANGS
+from corpus_templates import TOPICS, Topic
 
 PARAPHRASE_OPENERS = [
     "In practice,",
@@ -98,7 +40,8 @@ PARAPHRASE_OPENERS = [
     "When integrating with legacy systems,",
 ]
 
-SECTION_TEMPLATES = {
+SECTION_TEMPLATES: dict[str, list[str]] = {
+    "documentation": ["Summary", "Scope", "Key Concepts", "Usage", "References"],
     "guide": ["Overview", "Prerequisites", "Core Concepts", "Implementation Steps", "Validation", "Next Steps"],
     "tutorial": ["Goal", "Setup", "Step-by-Step", "Common Mistakes", "Exercise", "Solution Walkthrough"],
     "faq": ["Question", "Short Answer", "Detailed Explanation", "When To Use", "Related Topics"],
@@ -106,7 +49,16 @@ SECTION_TEMPLATES = {
     "api_reference": ["Endpoint", "Authentication", "Request Schema", "Response Schema", "Error Codes"],
     "code_walkthrough": ["Problem", "Approach", "Code", "Walkthrough", "Tests"],
     "architecture_decision": ["Context", "Options Considered", "Decision", "Consequences", "Review Date"],
+    "design_document": ["Goals", "Architecture", "Components", "Data Flow", "Open Questions"],
     "runbook": ["Trigger", "Severity", "Immediate Actions", "Escalation", "Recovery Verification"],
+    "incident_report": ["Summary", "Timeline", "Root Cause", "Impact", "Resolution", "Lessons Learned"],
+    "support_ticket": ["Problem", "Environment", "Steps Tried", "Resolution", "Related Docs"],
+    "release_notes": ["Version", "Highlights", "Breaking Changes", "Migration", "Known Issues"],
+    "migration_guide": ["Overview", "Prerequisites", "Step-by-Step", "Rollback", "Validation"],
+    "meeting_notes": ["Attendees", "Agenda", "Decisions", "Action Items", "Follow-ups"],
+    "code_review": ["Summary", "Strengths", "Issues", "Preferred Answer", "Suggested Changes"],
+    "database_schema": ["Overview", "Tables", "Indexes", "Constraints", "Relationships"],
+    "sql_example": ["Use Case", "Query", "Explanation", "Optimization", "Indexes"],
     "deep_dive": ["Background", "Internals", "Trade-offs", "Benchmarks", "Expert Notes"],
     "comparison": ["Criteria", "Option A", "Option B", "Recommendation", "Migration Path"],
     "best_practices": ["Principles", "Do", "Don't", "Checklist", "Examples"],
@@ -114,7 +66,16 @@ SECTION_TEMPLATES = {
     "cheat_sheet": ["Quick Reference", "Commands", "Configs", "Snippets", "Pitfalls"],
     "interview_prep": ["Concept", "Junior Answer", "Senior Answer", "Follow-up Questions", "Red Flags"],
     "case_study": ["Scenario", "Constraints", "Solution", "Outcome", "Lessons Learned"],
+    "benchmark": ["Suite", "Methodology", "Dataset", "Metrics", "Results", "Comparison"],
+    "evaluation": ["Rubric", "Good Answer", "Bad Answer", "Preferred Answer", "Scoring Guide"],
 }
+
+CODE_DOC_TYPES = frozenset({
+    "code_walkthrough", "tutorial", "guide", "api_reference",
+    "database_schema", "sql_example", "best_practices", "benchmark",
+})
+
+BENCHMARK_DOC_TYPES = frozenset({"benchmark", "evaluation", "comparison", "deep_dive"})
 
 
 @dataclass
@@ -127,19 +88,21 @@ class GeneratedDoc:
     difficulty: str
     variant: int
     word_count: int
-
-
-def _slugify(text: str) -> str:
-    text = text.lower().strip()
-    text = re.sub(r"[^a-z0-9]+", "_", text)
-    return text.strip("_")[:80]
+    hub: str | None = None
 
 
 def _pascal_case(text: str) -> str:
     return "".join(part.capitalize() for part in re.split(r"[_\s-]+", text) if part)
 
 
-def _render_code(topic: Topic, variant: int, lang: str) -> str:
+def _code_lang(topic: Topic) -> str:
+    return LANGUAGE_CATEGORIES.get(topic.category, random.choice(DEFAULT_CODE_LANGS))
+
+
+def _render_code(topic: Topic, variant: int, lang: str | None = None) -> str:
+    lang = lang or _code_lang(topic)
+    if lang not in CODE_SNIPPETS:
+        lang = random.choice(list(CODE_SNIPPETS.keys()))
     template = CODE_SNIPPETS[lang]
     class_name = _pascal_case(topic.slug)
     return template.format(
@@ -166,6 +129,24 @@ def _section_body(section: str, topic: Topic, doc_type: str, variant: int) -> st
     )
 
 
+def _benchmark_section(section: str, topic: Topic, variant: int) -> str:
+    recall = 0.72 + (variant % 10) * 0.02
+    p95 = 120 + variant * 15
+    return (
+        f"**{section}** — {topic.title} benchmark variant {variant}.\n\n"
+        f"| Metric | Value |\n|--------|-------|\n"
+        f"| recall@10 | {recall:.2f} |\n| p95 latency (ms) | {p95} |\n"
+        f"| error rate | {0.001 * (variant + 1):.4f} |\n\n"
+        f"**Good answer:** Grounded in measured results with trade-offs.\n"
+        f"**Bad answer:** Claims without metrics or missing failure modes.\n"
+        f"**Preferred answer:** Cites numbers, context, and next optimization steps."
+    )
+
+
+def _empty_relationships() -> dict[str, list[str]]:
+    return {field: [] for field in RELATIONSHIP_TYPES}
+
+
 def build_document(topic: Topic, doc_type: str, variant: int, scale: int) -> tuple[str, dict[str, Any]]:
     doc_id = hashlib.sha1(f"{topic.slug}:{doc_type}:{variant}:{scale}".encode()).hexdigest()[:12]
     title = f"{topic.title} — {doc_type.replace('_', ' ').title()} (v{variant})"
@@ -173,10 +154,13 @@ def build_document(topic: Topic, doc_type: str, variant: int, scale: int) -> tup
 
     body_parts = [f"# {title}\n"]
     for section in sections:
-        body_parts.append(f"\n## {section}\n\n{_section_body(section, topic, doc_type, variant)}")
+        if doc_type in BENCHMARK_DOC_TYPES and section in ("Benchmarks", "Results", "Metrics", "Rubric"):
+            body_parts.append(f"\n## {section}\n\n{_benchmark_section(section, topic, variant)}")
+        else:
+            body_parts.append(f"\n## {section}\n\n{_section_body(section, topic, doc_type, variant)}")
 
-    if doc_type in ("code_walkthrough", "tutorial", "guide", "api_reference"):
-        lang = random.choice(["python", "typescript", "sql", "yaml"])
+    if doc_type in CODE_DOC_TYPES:
+        lang = _code_lang(topic)
         body_parts.append(f"\n## Reference Implementation\n\n{_render_code(topic, variant, lang)}")
 
     if doc_type == "faq":
@@ -185,8 +169,14 @@ def build_document(topic: Topic, doc_type: str, variant: int, scale: int) -> tup
             f"Variant {variant} emphasizes operational excellence and measurable outcomes."
         )
 
+    if doc_type == "evaluation":
+        body_parts.append(
+            "\n\n**Preferred answer:** Specific, actionable, cites trade-offs and metrics.\n"
+            "**Bad answer:** Vague, hallucinated, or ignores provided context."
+        )
+
     body = "".join(body_parts)
-    metadata = {
+    metadata: dict[str, Any] = {
         "id": doc_id,
         "title": title,
         "category": topic.category,
@@ -196,10 +186,12 @@ def build_document(topic: Topic, doc_type: str, variant: int, scale: int) -> tup
         "tags": list(topic.keywords) + [doc_type, topic.category, f"variant_{variant}"],
         "variant": variant,
         "scale": scale,
-        "related": [],
         "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-        "version": "2.0",
+        "version": "3.0",
     }
+    if topic.hub:
+        metadata["hub"] = topic.hub
+    metadata.update(_empty_relationships())
     return body, metadata
 
 
@@ -223,12 +215,13 @@ def write_document(output_dir: Path, topic: Topic, doc_type: str, variant: int, 
         difficulty=topic.difficulty,
         variant=variant,
         word_count=len(body.split()),
+        hub=topic.hub,
     )
 
 
-def _generate_job(args: tuple[str, str, str, str, int, int, str]) -> dict[str, Any]:
-    topic_slug, topic_title, category, difficulty, keywords, variant, doc_type, scale_str, output_str = args
-    topic = Topic(topic_slug, topic_title, category, difficulty, tuple(keywords.split("|")))
+def _generate_job(args: tuple) -> dict[str, Any]:
+    topic_slug, topic_title, category, difficulty, keywords, variant, doc_type, scale_str, output_str, hub = args
+    topic = Topic(topic_slug, topic_title, category, difficulty, tuple(keywords.split("|")), hub or None)
     scale = int(scale_str)
     output_dir = Path(output_str)
     doc = write_document(output_dir, topic, doc_type, variant, scale)
@@ -240,16 +233,88 @@ def _generate_job(args: tuple[str, str, str, str, int, int, str]) -> dict[str, A
         "topic": doc.topic,
         "difficulty": doc.difficulty,
         "variant": doc.variant,
+        "hub": doc.hub,
         "word_count": doc.word_count,
     }
+
+
+def _lookup_id(index: dict[tuple[str, str, int], str], topic: str, doc_type: str, variant: int) -> str | None:
+    return index.get((topic, doc_type, variant))
+
+
+def wire_relationships(catalog: list[dict[str, Any]], output_dir: Path) -> int:
+    """Populate typed relationship fields and rewrite frontmatter."""
+    index: dict[tuple[str, str, int], str] = {}
+    by_id: dict[str, dict[str, Any]] = {}
+    for row in catalog:
+        key = (row["topic"], row["doc_type"], row["variant"])
+        index[key] = row["doc_id"]
+        by_id[row["doc_id"]] = row
+
+    edge_count = 0
+    hub_doc_types: dict[str, set[str]] = {}
+    for hub in KNOWLEDGE_HUBS:
+        hub_doc_types[hub.slug] = set(hub.doc_types)
+
+    for row in catalog:
+        path = Path(row["path"])
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        if not text.startswith("---"):
+            continue
+        parts = text.split("---", 2)
+        if len(parts) < 3:
+            continue
+        meta = yaml.safe_load(parts[1]) or {}
+        rels = _empty_relationships()
+
+        rules = DOC_TYPE_RELATIONSHIPS.get(row["doc_type"], {})
+        for rel_type, target_types in rules.items():
+            if rel_type not in RELATIONSHIP_TYPES:
+                rel_type = "see_also"
+            targets: list[str] = []
+            for target_type in target_types:
+                tid = _lookup_id(index, row["topic"], target_type, row["variant"])
+                if tid:
+                    targets.append(tid)
+            rels[rel_type] = targets
+            edge_count += len(targets)
+
+        # Hub wiring: link to sibling doc types in same hub
+        hub = row.get("hub") or meta.get("hub")
+        if hub and hub in hub_doc_types:
+            for sibling_type in hub_doc_types[hub]:
+                if sibling_type == row["doc_type"]:
+                    continue
+                tid = _lookup_id(index, row["topic"], sibling_type, row["variant"])
+                if tid and tid not in rels["see_also"]:
+                    rels["see_also"].append(tid)
+                    edge_count += 1
+
+        # Cross-variant see_also
+        if row["variant"] > 0:
+            prev_id = _lookup_id(index, row["topic"], row["doc_type"], row["variant"] - 1)
+            if prev_id:
+                rels["replaces"].append(prev_id)
+                edge_count += 1
+
+        meta.update(rels)
+        meta["related"] = list(dict.fromkeys(
+            rels["see_also"] + rels["depends_on"] + rels["uses"] + rels["implements"]
+        ))
+        new_fm = yaml.safe_dump(meta, sort_keys=False).strip()
+        body_part = parts[2].lstrip("\n")
+        path.write_text(f"---\n{new_fm}\n---\n\n{body_part}", encoding="utf-8")
+        row["relationships"] = {k: v for k, v in rels.items() if v}
+
+    return edge_count
 
 
 def copy_seed_corpus(seed_dir: Path, output_dir: Path) -> int:
     seed_out = output_dir / "_seed"
     seed_out.mkdir(parents=True, exist_ok=True)
     count = 0
-
-    # Copy only original seed content, never generated/
     patterns = ["CHUNK-*.md", "configs/*", "schemas/*", "openapi/*", "kubernetes/*", "docker-compose/*"]
     for pattern in patterns:
         for path in seed_dir.glob(pattern):
@@ -272,7 +337,6 @@ def build_jobs(
     scale: int,
     output_dir: Path,
 ) -> list[tuple]:
-    # scale=1000 with variations=12 → 12 variants per topic/doc_type (~112k files)
     effective_variants = max(1, int(variations * scale / 1000))
     jobs = []
     for topic in topics:
@@ -289,20 +353,42 @@ def build_jobs(
                         doc_type,
                         str(scale),
                         str(output_dir),
+                        topic.hub or "",
                     )
                 )
     return jobs
 
 
+def compute_brain_statistics(catalog: list[dict[str, Any]], edge_count: int, seed_count: int) -> dict[str, Any]:
+    doc_types = [r["doc_type"] for r in catalog]
+    return {
+        "documents": len(catalog) + seed_count,
+        "generated_documents": len(catalog),
+        "seed_documents": seed_count,
+        "code_examples": sum(1 for r in catalog if r["doc_type"] in CODE_DOC_TYPES),
+        "apis": doc_types.count("api_reference"),
+        "sql_queries": doc_types.count("sql_example") + doc_types.count("database_schema"),
+        "runbooks": doc_types.count("runbook"),
+        "incident_reports": doc_types.count("incident_report"),
+        "adrs": doc_types.count("architecture_decision"),
+        "benchmarks": doc_types.count("benchmark") + doc_types.count("evaluation"),
+        "support_tickets": doc_types.count("support_ticket"),
+        "relationships": edge_count,
+        "knowledge_hubs": len(KNOWLEDGE_HUBS),
+        "categories": len({r["category"] for r in catalog}),
+        "document_types": len({r["doc_type"] for r in catalog}),
+    }
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate advanced knowledge-base corpus at scale")
+    parser = argparse.ArgumentParser(description="Generate connected knowledge-base corpus at scale")
     parser.add_argument("--config", type=Path, default=Path("config/corpus_generation.yaml"))
-    parser.add_argument("--scale", type=int, default=None, help="Override scale multiplier")
+    parser.add_argument("--scale", type=int, default=None)
     parser.add_argument("--variations", type=int, default=None)
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--seed-dir", type=Path, default=None)
     parser.add_argument("--workers", type=int, default=None)
-    parser.add_argument("--max-files", type=int, default=0, help="Cap total generated files (0=unlimited)")
+    parser.add_argument("--max-files", type=int, default=0)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -324,6 +410,7 @@ def main() -> None:
 
     print(f"Topics: {len(topics)}")
     print(f"Document types: {len(doc_types)}")
+    print(f"Knowledge hubs: {len(KNOWLEDGE_HUBS)}")
     print(f"Scale: {scale}, variations: {variations}")
     print(f"Planned files: {len(jobs):,}")
 
@@ -348,18 +435,17 @@ def main() -> None:
             if completed % 5000 == 0:
                 print(f"Generated {completed:,} / {len(jobs):,} files...")
 
+    print("Wiring document relationships...")
+    edge_count = wire_relationships(catalog, output_dir)
+
     catalog.sort(key=lambda row: row["path"])
-    catalog_path = output_dir / "catalog.json"
+    brain_stats = compute_brain_statistics(catalog, edge_count, seed_count)
     stats = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "total_files": len(catalog) + seed_count,
-        "generated_files": len(catalog),
-        "seed_files": seed_count,
         "scale": scale,
         "variations_per_doc": variations,
         "topics": len(topics),
-        "document_types": len(doc_types),
-        "categories": sorted({row["category"] for row in catalog}),
+        "brain_statistics": brain_stats,
         "by_category": {},
         "by_doc_type": {},
     }
@@ -367,9 +453,10 @@ def main() -> None:
         stats["by_category"][row["category"]] = stats["by_category"].get(row["category"], 0) + 1
         stats["by_doc_type"][row["doc_type"]] = stats["by_doc_type"].get(row["doc_type"], 0) + 1
 
-    catalog_path.write_text(
-        json.dumps({"stats": stats, "files": catalog}, indent=2),
-        encoding="utf-8",
+    catalog_path = output_dir / "catalog.json"
+    catalog_path.write_text(json.dumps({"stats": stats, "files": catalog}, indent=2), encoding="utf-8")
+    (output_dir / "brain_statistics.json").write_text(
+        json.dumps(brain_stats, indent=2), encoding="utf-8"
     )
     print(json.dumps(stats, indent=2))
     print(f"Catalog written to {catalog_path}")

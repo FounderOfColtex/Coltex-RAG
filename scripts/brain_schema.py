@@ -1,0 +1,317 @@
+"""Zypher brain schema — document types, categories, relationships, and knowledge hubs."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+# Rich relationship types (GraphRAG edges)
+RELATIONSHIP_TYPES = (
+    "related",
+    "depends_on",
+    "uses",
+    "implements",
+    "calls",
+    "owned_by",
+    "documents",
+    "fixes",
+    "replaces",
+    "see_also",
+)
+
+# Document types the brain can generate and index
+DOCUMENT_TYPES = [
+    # Core documentation
+    "documentation",
+    "guide",
+    "tutorial",
+    "faq",
+    "troubleshooting",
+    # Operations
+    "runbook",
+    "incident_report",
+    "support_ticket",
+    "release_notes",
+    "migration_guide",
+    # Engineering
+    "api_reference",
+    "architecture_decision",
+    "design_document",
+    "code_walkthrough",
+    "code_review",
+    "meeting_notes",
+    # Data & SQL
+    "database_schema",
+    "sql_example",
+    # Learning & reference
+    "deep_dive",
+    "comparison",
+    "best_practices",
+    "anti_patterns",
+    "cheat_sheet",
+    "interview_prep",
+    "case_study",
+    # Evaluation
+    "benchmark",
+    "evaluation",
+]
+
+# How doc types link within the same knowledge hub / topic
+DOC_TYPE_RELATIONSHIPS: dict[str, dict[str, list[str]]] = {
+    "api_reference": {
+        "see_also": ["runbook", "faq", "troubleshooting"],
+        "documents": ["architecture_decision"],
+        "uses": ["database_schema"],
+        "calls": ["code_walkthrough"],
+    },
+    "runbook": {
+        "fixes": ["incident_report"],
+        "uses": ["api_reference"],
+        "depends_on": ["architecture_decision"],
+        "see_also": ["troubleshooting"],
+    },
+    "architecture_decision": {
+        "documents": ["design_document"],
+        "see_also": ["api_reference", "runbook"],
+        "replaces": ["meeting_notes"],
+    },
+    "incident_report": {
+        "fixes": ["troubleshooting"],
+        "see_also": ["runbook", "incident_report"],
+        "owned_by": ["runbook"],
+    },
+    "code_walkthrough": {
+        "implements": ["architecture_decision", "design_document"],
+        "calls": ["api_reference"],
+        "see_also": ["best_practices"],
+    },
+    "database_schema": {
+        "documents": ["sql_example"],
+        "used_by": ["api_reference"],  # mapped to see_also at wire time
+    },
+    "sql_example": {
+        "uses": ["database_schema"],
+        "see_also": ["best_practices", "troubleshooting"],
+    },
+    "benchmark": {
+        "documents": ["evaluation"],
+        "see_also": ["comparison", "deep_dive"],
+    },
+    "evaluation": {
+        "see_also": ["benchmark", "code_review"],
+    },
+    "support_ticket": {
+        "fixes": ["troubleshooting"],
+        "see_also": ["runbook", "faq"],
+    },
+    "migration_guide": {
+        "replaces": ["documentation"],
+        "depends_on": ["architecture_decision"],
+        "see_also": ["release_notes"],
+    },
+    "design_document": {
+        "documents": ["api_reference", "code_walkthrough"],
+        "see_also": ["architecture_decision"],
+    },
+}
+
+CATEGORIES = [
+    # RAG & AI
+    "rag",
+    "graphrag",
+    "agentic",
+    "chunking",
+    "embeddings",
+    "vector_stores",
+    "vector_search",
+    "retrieval",
+    "indexing",
+    "fine_tuning",
+    "prompt_engineering",
+    "tool_use",
+    "memory",
+    # Languages
+    "python",
+    "java",
+    "javascript",
+    "typescript",
+    "csharp",
+    "cpp",
+    "go",
+    "rust",
+    "sql",
+    "html_css",
+    "bash",
+    "powershell",
+    # Databases
+    "postgresql",
+    "mysql",
+    "sqlite",
+    "mongodb",
+    "redis",
+    # Cloud & DevOps
+    "docker",
+    "kubernetes",
+    "github_actions",
+    "gitlab_ci",
+    "aws",
+    "azure",
+    "gcp",
+    "linux",
+    "nginx",
+    "terraform",
+    "ci_cd",
+  # Architecture
+    "microservices",
+    "event_driven",
+    "cqrs",
+    "architecture",
+    "clean_architecture",
+    "domain_driven_design",
+    # Engineering practice
+    "api_design",
+    "security",
+    "observability",
+    "testing",
+    "debugging",
+    "performance",
+    "code_review",
+    "incidents",
+    "data_quality",
+    "mlops",
+    # Tools
+    "git",
+    "github",
+    "package_managers",
+    "build_tools",
+    "terminal",
+]
+
+# Category → preferred code snippet language
+LANGUAGE_CATEGORIES: dict[str, str] = {
+    "python": "python",
+    "java": "java",
+    "javascript": "javascript",
+    "typescript": "typescript",
+    "csharp": "csharp",
+    "cpp": "cpp",
+    "go": "go",
+    "rust": "rust",
+    "sql": "sql",
+    "postgresql": "sql",
+    "mysql": "sql",
+    "sqlite": "sql",
+    "html_css": "html_css",
+    "bash": "bash",
+    "powershell": "powershell",
+    "docker": "dockerfile",
+    "kubernetes": "yaml",
+    "terraform": "hcl",
+    "nginx": "nginx",
+    "github_actions": "yaml",
+    "gitlab_ci": "yaml",
+    "mongodb": "javascript",
+    "redis": "bash",
+}
+
+# Example brain scale statistics (grow with corpus generation)
+BRAIN_STATISTICS_EXAMPLES = {
+    "documents": 250_000,
+    "code_examples": 75_000,
+    "apis": 30_000,
+    "sql_queries": 20_000,
+    "runbooks": 15_000,
+    "incident_reports": 10_000,
+    "adrs": 5_000,
+    "relationships": 1_000_000,
+}
+
+
+@dataclass(frozen=True)
+class KnowledgeHub:
+    """Connected document cluster — e.g. Authentication Service."""
+
+    slug: str
+    title: str
+    category: str
+    components: tuple[str, ...]
+    doc_types: tuple[str, ...]
+
+
+KNOWLEDGE_HUBS: list[KnowledgeHub] = [
+    KnowledgeHub(
+        "auth_service",
+        "Authentication Service",
+        "security",
+        ("JWT", "PostgreSQL", "OAuth", "RBAC", "Session Management"),
+        (
+            "api_reference",
+            "runbook",
+            "architecture_decision",
+            "incident_report",
+            "code_walkthrough",
+            "database_schema",
+            "sql_example",
+            "best_practices",
+            "troubleshooting",
+            "benchmark",
+        ),
+    ),
+    KnowledgeHub(
+        "indexing_pipeline",
+        "Document Indexing Pipeline",
+        "indexing",
+        ("Embeddings", "Vector Store", "Chunking", "HNSW", "Kafka"),
+        (
+            "api_reference",
+            "runbook",
+            "architecture_decision",
+            "code_walkthrough",
+            "troubleshooting",
+            "benchmark",
+            "design_document",
+        ),
+    ),
+    KnowledgeHub(
+        "graphrag_engine",
+        "GraphRAG Engine",
+        "graphrag",
+        ("Knowledge Graph", "AST Parser", "Traversal", "Vector Search"),
+        (
+            "api_reference",
+            "architecture_decision",
+            "deep_dive",
+            "code_walkthrough",
+            "benchmark",
+            "evaluation",
+        ),
+    ),
+    KnowledgeHub(
+        "payment_service",
+        "Payment Processing Service",
+        "microservices",
+        ("Stripe API", "PostgreSQL", "Idempotency", "Webhooks", "PCI"),
+        (
+            "api_reference",
+            "runbook",
+            "incident_report",
+            "database_schema",
+            "sql_example",
+            "architecture_decision",
+            "migration_guide",
+        ),
+    ),
+    KnowledgeHub(
+        "ci_cd_platform",
+        "CI/CD Platform",
+        "ci_cd",
+        ("GitHub Actions", "Docker", "Kubernetes", "Terraform", "Canary Deploy"),
+        (
+            "runbook",
+            "troubleshooting",
+            "release_notes",
+            "migration_guide",
+            "best_practices",
+            "incident_report",
+        ),
+    ),
+]

@@ -35,17 +35,31 @@ def parse_markdown(path: Path) -> tuple[dict[str, Any], str]:
         except yaml.YAMLError:
             metadata = {}
         body = text[match.end() :].strip()
-
-    # Legacy double-frontmatter chunks
-    if not metadata and text.count("---") >= 2:
+    elif text.count("---") >= 2:
         parts = text.split("---")
-        if len(parts) >= 3:
+        outer: dict = {}
+        inner: dict = {}
+        if parts[0].strip():
             try:
-                loaded = yaml.safe_load(parts[1].strip())
-                metadata = loaded if isinstance(loaded, dict) else {}
+                loaded = yaml.safe_load(parts[0].strip())
+                outer = loaded if isinstance(loaded, dict) else {}
             except yaml.YAMLError:
-                metadata = {}
-            body = "---".join(parts[2:]).strip()
+                outer = {}
+        if len(parts) > 2 and parts[2].strip():
+            try:
+                loaded = yaml.safe_load(parts[2].strip())
+                inner = loaded if isinstance(loaded, dict) else {}
+            except yaml.YAMLError:
+                inner = {}
+        metadata = {**outer, **inner}
+        if outer.get("related"):
+            metadata["related"] = outer["related"]
+        for key in ("depends_on", "uses", "implements", "calls", "see_also", "fixes", "documents"):
+            if outer.get(key):
+                metadata[key] = outer[key]
+        if inner.get("title"):
+            metadata["title"] = inner["title"]
+        body = "---".join(parts[3:]).strip() if len(parts) > 3 else ""
 
     return metadata, body
 
@@ -224,19 +238,99 @@ def rag_with_context(metadata: dict, body: str, source: str) -> list[dict[str, A
         return []
 
     context = content[: min(1200, len(content))]
+    rel_hints = []
+    for key in ("see_also", "depends_on", "uses", "implements"):
+        vals = metadata.get(key) or []
+        if vals:
+            rel_hints.append(f"{key}: {', '.join(str(v) for v in vals[:3])}")
+    rel_block = ("\nRelated: " + "; ".join(rel_hints)) if rel_hints else ""
+
     return [
         example(
             [
                 {"role": "system", "content": SYSTEM_PROMPT + " Use the provided context when answering."},
                 {
                     "role": "user",
-                    "content": f"<context>\n{context}\n</context>\n\nBased on the context, answer: {title}",
+                    "content": f"<context>\n{context}{rel_block}\n</context>\n\nBased on the context, answer: {title}",
                 },
                 {"role": "assistant", "content": content},
             ],
             task_type="rag_with_context",
             source=source,
             difficulty=metadata.get("difficulty", "intermediate"),
+            hub=metadata.get("hub"),
+        )
+    ]
+
+
+def benchmark_evaluation(metadata: dict, body: str, source: str) -> list[dict[str, Any]]:
+    doc_type = metadata.get("doc_type", "")
+    if doc_type not in ("benchmark", "evaluation", "comparison"):
+        return []
+    title = extract_title(metadata, body)
+    content = section_text(body)
+    if len(content) < 80:
+        return []
+
+    return [
+        example(
+            [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": f"Interpret the benchmark/evaluation for {title}. What is a good vs bad answer?",
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "**Good answer:** Cites measured metrics, explains trade-offs, and recommends next steps.\n"
+                        "**Bad answer:** Hand-wavy claims without numbers or ignores failure modes.\n"
+                        "**Preferred answer:** Specific, grounded, actionable.\n\n" + content[:1000]
+                    ),
+                },
+            ],
+            task_type="benchmark_interpretation",
+            source=source,
+            difficulty=metadata.get("difficulty", "intermediate"),
+        )
+    ]
+
+
+def graph_traversal(metadata: dict, body: str, source: str) -> list[dict[str, Any]]:
+    rels = []
+    for key in ("depends_on", "uses", "implements", "calls", "see_also"):
+        for target in (metadata.get(key) or [])[:2]:
+            rels.append(f"{key} → {target}")
+    if not rels:
+        return []
+
+    title = extract_title(metadata, body)
+    content = section_text(body)[:600]
+    return [
+        example(
+            [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": (
+                        f"Given document `{title}` with graph links:\n"
+                        + "\n".join(f"- {r}" for r in rels)
+                        + "\n\nWhat related documents should we traverse for a complete answer?"
+                    ),
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Traverse in this order:\n"
+                        + "\n".join(f"1. Follow `{r}` for supporting context." for r in rels[:4])
+                        + f"\n\nCore content:\n{content}"
+                    ),
+                },
+            ],
+            task_type="graph_traversal",
+            source=source,
+            difficulty=metadata.get("difficulty", "intermediate"),
+            hub=metadata.get("hub"),
         )
     ]
 
@@ -254,7 +348,9 @@ def code_tasks(metadata: dict, body: str, source: str) -> list[dict[str, Any]]:
     doc_type = metadata.get("doc_type", "")
     results = []
 
-    if doc_type in ("code_walkthrough", "tutorial", "guide"):
+    if doc_type in ("code_walkthrough", "tutorial", "guide", "sql_example", "database_schema"):
+        lang_match = re.search(r"```(\w+)", body)
+        lang = lang_match.group(1) if lang_match else "python"
         results.append(
             example(
                 [
@@ -263,7 +359,7 @@ def code_tasks(metadata: dict, body: str, source: str) -> list[dict[str, Any]]:
                         "role": "user",
                         "content": f"Write production-ready code for: {title}",
                     },
-                    {"role": "assistant", "content": f"```python\n{code}\n```\n\n{section_text(body)[:400]}"},
+                    {"role": "assistant", "content": f"```{lang}\n{code}\n```\n\n{section_text(body)[:400]}"},
                 ],
                 task_type="code_generation",
                 source=source,
@@ -306,6 +402,8 @@ GENERATORS = [
     tool_calling,
     rag_with_context,
     code_tasks,
+    benchmark_evaluation,
+    graph_traversal,
 ]
 
 

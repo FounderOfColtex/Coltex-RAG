@@ -1,17 +1,16 @@
-# Corpus generation settings — default targets ~1000x expansion over seed KB
+# Zypher brain — corpus generation settings
+# Generates connected documents with rich relationship graphs
 
 seed_dir: knowledge-base
 output_dir: knowledge-base/generated
 
-# scale=1000 targets ~112k generated files (1000x the original ~112 seed topics×types)
 scale: 1000
-
-# Per-template variation count (paraphrases, difficulty shifts, code variants)
 variations_per_doc: 12
-
-# Cap files per category (0 = unlimited)
 max_files_per_category: 0
+write_catalog: true
+parallel_workers: 4
 
+# Full category list — languages, databases, cloud, architecture, tools
 categories:
   - rag
   - graphrag
@@ -19,40 +18,83 @@ categories:
   - chunking
   - embeddings
   - vector_stores
+  - vector_search
   - retrieval
   - indexing
-  - security
-  - observability
-  - kubernetes
-  - api_design
-  - python
-  - typescript
-  - rust
-  - go
-  - sql
-  - testing
-  - ci_cd
-  - architecture
-  - incidents
-  - code_review
-  - debugging
-  - performance
-  - data_quality
-  - mlops
   - fine_tuning
   - prompt_engineering
   - tool_use
   - memory
+  - python
+  - java
+  - javascript
+  - typescript
+  - csharp
+  - cpp
+  - go
+  - rust
+  - sql
+  - html_css
+  - bash
+  - powershell
+  - postgresql
+  - mysql
+  - sqlite
+  - mongodb
+  - redis
+  - docker
+  - kubernetes
+  - github_actions
+  - gitlab_ci
+  - aws
+  - azure
+  - gcp
+  - linux
+  - nginx
+  - terraform
+  - ci_cd
+  - microservices
+  - event_driven
+  - cqrs
+  - architecture
+  - clean_architecture
+  - domain_driven_design
+  - api_design
+  - security
+  - observability
+  - testing
+  - debugging
+  - performance
+  - code_review
+  - incidents
+  - data_quality
+  - mlops
+  - git
+  - github
+  - package_managers
+  - build_tools
+  - terminal
 
+# Document types — operations, engineering, data, evaluation
 document_types:
+  - documentation
   - guide
   - tutorial
   - faq
   - troubleshooting
-  - api_reference
-  - code_walkthrough
-  - architecture_decision
   - runbook
+  - incident_report
+  - support_ticket
+  - release_notes
+  - migration_guide
+  - api_reference
+  - architecture_decision
+  - design_document
+  - code_walkthrough
+  - code_review
+  - meeting_notes
+  - database_schema
+  - sql_example
   - deep_dive
   - comparison
   - best_practices
@@ -60,6 +102,5 @@ document_types:
   - cheat_sheet
   - interview_prep
   - case_study
-
-write_catalog: true
-parallel_workers: 4
+  - benchmark
+  - evaluation

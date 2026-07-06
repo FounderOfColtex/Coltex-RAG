@@ -1,0 +1,45 @@
+# Zypher brain configuration — knowledge graph and statistics
+
+knowledge_hubs:
+  - auth_service
+  - indexing_pipeline
+  - graphrag_engine
+  - payment_service
+  - ci_cd_platform
+
+relationship_types:
+  - depends_on
+  - uses
+  - implements
+  - calls
+  - owned_by
+  - documents
+  - fixes
+  - replaces
+  - see_also
+  - related
+
+# Example scale targets (grow organically with high-quality content)
+statistics_examples:
+  documents: 250000
+  code_examples: 75000
+  apis: 30000
+  sql_queries: 20000
+  runbooks: 15000
+  incident_reports: 10000
+  adrs: 5000
+  relationships: 1000000
+
+# Hub document cluster pattern:
+#   Service → JWT, PostgreSQL, API, Runbook, Incidents, Code, SQL, Tests, ADR
+hub_doc_types:
+  - api_reference
+  - runbook
+  - architecture_decision
+  - incident_report
+  - code_walkthrough
+  - database_schema
+  - sql_example
+  - best_practices
+  - troubleshooting
+  - benchmark
