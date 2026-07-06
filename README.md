@@ -99,20 +99,18 @@ improves accuracy for dependency tracing, impact analysis, and monorepo navigati
 
 ## Current results (v0.1)
 
-Early benchmark numbers from the initial from-scratch training run (smoke corpus, ~11.7k SFT examples, default ~138M-param config):
+**Not yet trained** — the table below shows **benchmark targets** for the first training run. Update this section with real numbers after you complete Colab training.
 
-| Metric | Current (v0.1) | Target |
-|--------|----------------|--------|
-| FAQ accuracy (seed set) | **73.4%** | > 70% |
-| Validation loss (SFT) | **1.91** | < 2.0 |
-| Perplexity (pretrain) | **12.6** | < 15 |
-| Code review score | **71%** | > 70% |
-| RAG faithfulness | 68.2% | > 80% |
-| Multi-turn coherence | 64.5% | > 75% |
-| GraphRAG concept accuracy | 72.1% | > 75% |
-| Syntax-valid code generation | 79.3% | > 85% |
-
-v0.1 clears the FAQ and code-review bar; RAG faithfulness and multi-turn coherence are the main gaps planned for v1.1 evaluation work.
+| Metric | Target |
+|--------|--------|
+| FAQ accuracy (seed set) | > 70% |
+| Validation loss (SFT) | < 2.0 |
+| Perplexity (pretrain) | < 15 |
+| Code review score | > 70% |
+| RAG faithfulness | > 80% |
+| Multi-turn coherence | > 75% |
+| GraphRAG concept accuracy | > 75% |
+| Syntax-valid code generation | > 85% |
 
 ## What's included
 
@@ -257,43 +255,43 @@ The advanced dataset builder creates multiple examples per knowledge file:
 
 ## Benchmark goals
 
-Targets for the next training runs beyond v0.1. Current results are in [Current results (v0.1)](#current-results-v01) above.
+Targets for evaluating models trained on this pipeline. Record your results in the [Current results (v0.1)](#current-results-v01) section after training.
 
 ### Language modeling (pretrain)
 
-| Metric | v0.1 | Target | Notes |
-|--------|------|--------|-------|
-| Validation perplexity | **12.6** | < 15 | On held-out `pretrain.txt` split |
-| Tokens/sec (A100) | ~18k | > 20k | Default ~138M config, mixed precision |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Validation perplexity | < 15 | On held-out `pretrain.txt` split |
+| Tokens/sec (A100) | > 20k | Default ~138M config, mixed precision |
 
 ### Chat quality (SFT)
 
-| Metric | v0.1 | Target | Notes |
-|--------|------|--------|-------|
-| FAQ exact-match (seed set) | **73.4%** | > 70% | On curated seed FAQ chunks only |
-| RAG faithfulness | 68.2% | > 80% | Answer stays within provided context |
-| Multi-turn coherence | 64.5% | > 75% | Human or LLM-judge rubric on 100-dialogue sample |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| FAQ exact-match (seed set) | > 70% | On curated seed FAQ chunks only |
+| RAG faithfulness | > 80% | Answer stays within provided context |
+| Multi-turn coherence | > 75% | Human or LLM-judge rubric on 100-dialogue sample |
 
 ### Code tasks
 
-| Metric | v0.1 | Target | Notes |
-|--------|------|--------|-------|
-| Code review relevance | **71%** | > 70% | Review addresses stated issue |
-| Syntax-valid generation | 79.3% | > 85% | Generated code parses without errors |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Code review relevance | > 70% | Review addresses stated issue |
+| Syntax-valid generation | > 85% | Generated code parses without errors |
 
 ### Retrieval-augmented (Zypher domain)
 
-| Metric | v0.1 | Target | Notes |
-|--------|------|--------|-------|
-| GraphRAG concept accuracy | 72.1% | > 75% | Correct use of graph/dependency terminology |
-| ADR structure completeness | 66.8% | > 80% | Includes context, decision, consequences |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| GraphRAG concept accuracy | > 75% | Correct use of graph/dependency terminology |
+| ADR structure completeness | > 80% | Includes context, decision, consequences |
 
 ### Operational
 
-| Metric | v0.1 | Target | Notes |
-|--------|------|--------|-------|
-| p95 inference latency (GPU) | ~620 ms | < 500 ms | 128-token prompt, 256-token output |
-| Training reproducibility | ±2.1% val loss | ±2% | Same seed, same hardware |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| p95 inference latency (GPU) | < 500 ms | 128-token prompt, 256-token output |
+| Training reproducibility | ±2% val loss | Same seed, same hardware |
 
 ## Project roadmap
 

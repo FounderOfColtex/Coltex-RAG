@@ -44,7 +44,13 @@ def cmd_train_tokenizer(args: argparse.Namespace) -> None:
 
 
 def cmd_pretrain(args: argparse.Namespace) -> None:
+    import yaml
+
     cfg = load_config(args.config)
+    with Path(args.config).open(encoding="utf-8") as handle:
+        raw_cfg = yaml.safe_load(handle)
+    pretrain_cfg = raw_cfg.get("training", {}).get("pretrain", {})
+
     tokenizer = ChatbotTokenizer.load(Path(args.tokenizer))
     model = ChatbotModel(
         vocab_size=tokenizer.vocab_size,
@@ -65,12 +71,11 @@ def cmd_pretrain(args: argparse.Namespace) -> None:
             f"ERROR: No pretrain samples in {args.data}. Run `make prepare-advanced` first."
         )
 
-    train_cfg = cfg.__dict__.get("training", {}) if hasattr(cfg, "training") else {}
     trainer = Trainer(
         model,
         tokenizer,
         Path(args.output or "outputs/pretrain"),
-        learning_rate=float(train_cfg.get("pretrain", {}).get("learning_rate", 3e-4) if isinstance(train_cfg, dict) else 3e-4),
+        learning_rate=float(pretrain_cfg.get("learning_rate", 3e-4)),
         batch_size=args.batch_size,
         max_steps=args.max_steps,
     )
@@ -80,21 +85,21 @@ def cmd_pretrain(args: argparse.Namespace) -> None:
 def cmd_sft(args: argparse.Namespace) -> None:
     cfg = load_config(args.config)
     tokenizer = ChatbotTokenizer.load(Path(args.tokenizer))
-    model = ChatbotModel(
-        vocab_size=tokenizer.vocab_size,
-        max_seq_len=cfg.model.max_seq_len,
-        d_model=cfg.model.d_model,
-        n_heads=cfg.model.n_heads,
-        n_layers=cfg.model.n_layers,
-        d_ff=cfg.model.d_ff,
-        dropout=cfg.model.dropout,
-        rope_theta=cfg.model.rope_theta,
-    )
 
     if args.checkpoint:
-        ckpt = resolve_checkpoint(args.checkpoint)
-        state = __import__("torch").load(ckpt / "model.pt", map_location="cpu")
-        model.load_state_dict(state)
+        model = ChatbotModel.from_checkpoint(resolve_checkpoint(args.checkpoint))
+    else:
+        print("WARNING: No pretrain checkpoint — SFT starting from random weights.")
+        model = ChatbotModel(
+            vocab_size=tokenizer.vocab_size,
+            max_seq_len=cfg.model.max_seq_len,
+            d_model=cfg.model.d_model,
+            n_heads=cfg.model.n_heads,
+            n_layers=cfg.model.n_layers,
+            d_ff=cfg.model.d_ff,
+            dropout=cfg.model.dropout,
+            rope_theta=cfg.model.rope_theta,
+        )
 
     dataset = SFTDataset(Path(args.data), tokenizer, cfg.model.max_seq_len)
     print(f"SFT samples: {len(dataset):,}")

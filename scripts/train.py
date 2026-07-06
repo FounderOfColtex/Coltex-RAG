@@ -52,6 +52,11 @@ def main() -> None:
     val_file = args.val_file or Path(cfg["data"]["val_file"])
     output_dir = Path(cfg["training"]["output_dir"])
 
+    if not train_file.exists():
+        raise FileNotFoundError(
+            f"Training file not found: {train_file}. Run `make prepare-advanced` first."
+        )
+
     use_4bit = cfg["model"].get("load_in_4bit", True)
     bf16 = cfg["training"].get("bf16", torch.cuda.is_available())
 

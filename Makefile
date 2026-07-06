@@ -1,7 +1,16 @@
-.PHONY: install generate prepare prepare-advanced pipeline train train-scratch chat clean
+.PHONY: install validate generate prepare prepare-advanced pipeline train train-scratch chat clean
 
 install:
 	pip install -r requirements.txt
+
+validate:
+	python3 scripts/validate_pipeline.py
+
+validate-pretrain:
+	python3 scripts/validate_pipeline.py --require-checkpoint pretrain
+
+validate-sft:
+	python3 scripts/validate_pipeline.py --require-checkpoint sft
 
 # Generate ~112k knowledge files at scale=1000 (use SCALE=10 for quick smoke test)
 generate:
@@ -28,9 +37,13 @@ train:
 train-tokenizer:
 	python3 -m chatbot.cli train-tokenizer --corpus-glob "knowledge-base/**/*.md"
 
-train-scratch: train-tokenizer
-	python3 -m chatbot.cli pretrain --data data/advanced/pretrain.txt --max-steps 2000
-	python3 -m chatbot.cli sft --data data/advanced/train.jsonl --checkpoint outputs/pretrain/checkpoint-final --max-steps 3000
+train-scratch:
+	$(MAKE) train-tokenizer
+	python3 scripts/validate_pipeline.py --require-tokenizer
+	python3 -m chatbot.cli pretrain --data data/advanced/pretrain.txt --batch-size 1 --max-steps 2000
+	python3 scripts/validate_pipeline.py --require-checkpoint pretrain
+	python3 -m chatbot.cli sft --data data/advanced/train.jsonl --checkpoint outputs/pretrain/checkpoint-final --batch-size 1 --max-steps 3000
+	python3 scripts/validate_pipeline.py --require-checkpoint sft
 
 chat:
 	python3 -m chatbot.cli chat --checkpoint outputs/sft/checkpoint-final
