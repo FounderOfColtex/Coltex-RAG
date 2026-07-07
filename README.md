@@ -28,18 +28,23 @@ Coltex delivers a production-grade knowledge layer: 62+ domain folders, thousand
                         brain retrieve / report
 ```
 
-| Region | Path | Purpose |
-|--------|------|---------|
-| Processing layers | `knowledge-corpus/cortex/` | L1–L6 document processing stack |
-| Functional clusters | `knowledge-corpus/lobes/` | Domain groupings by function |
-| Domains | `knowledge-corpus/domains/` | 62+ technology categories |
-| Knowledge hubs | `knowledge-corpus/hubs/` | 18 service-level clusters |
-| Graph links | `knowledge-corpus/synapses/` | Hub-to-hub relationships |
-| Pathways | `knowledge-corpus/pathways/` | Inter-cluster routes |
-| Memory tiers | `knowledge-corpus/memory/` | Working, episodic, semantic, procedural |
-| Quick reference | `knowledge-corpus/reflexes/` | FAQ index |
+---
 
-Architecture reference: [docs/architecture/knowledge-architecture.md](docs/architecture/knowledge-architecture.md)
+## Dataset Deliverables
+
+Each product build exports a versioned, checksum-signed artifact set:
+
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Chunks | `data/product/chunks/chunks.jsonl` | Vector-ready text segments with metadata |
+| Catalog | `data/product/catalog.jsonl` | Per-document index and provenance |
+| Embeddings | `data/product/embeddings/embeddings.jsonl` | Pre-computed sentence-transformer vectors |
+| Graph | `data/product/graph/edges.jsonl` | Typed relationship edges (`depends_on`, `see_also`, …) |
+| Metadata | `data/product/metadata/documents.json` | Document-level schema index |
+| Benchmarks | `benchmarks/*.jsonl` | FAQ pairs, retrieval gold, and RAG evaluation sets |
+| Manifest | `data/product/manifest.json` | SHA-256 checksums, version, and build metadata |
+
+All distributable content is original synthetic material. Purchasers receive a perpetual commercial use license — see `EULA` and `knowledge-base/LICENSE`.
 
 ---
 
