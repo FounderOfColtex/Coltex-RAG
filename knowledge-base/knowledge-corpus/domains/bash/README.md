@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about bash"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

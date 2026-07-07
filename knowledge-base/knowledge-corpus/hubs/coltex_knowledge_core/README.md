@@ -13,4 +13,4 @@ Neural hub `coltex_knowledge_core` — a connected cluster of documents sharing 
 deep_dive, architecture_decision, guide, benchmark, evaluation
 
 
-**Lobe:** `frontal` · **Tier:** `meta`
+**Cluster:** `architecture` · **Tier:** `meta`

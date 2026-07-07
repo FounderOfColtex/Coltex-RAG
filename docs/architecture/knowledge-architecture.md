@@ -8,11 +8,11 @@ Enterprise multi-layer RAG knowledge corpus with graph-linked domains, knowledge
 flowchart TB
     subgraph layers [Processing Layers L1-L6]
         L1[L1 Ingestion]
-        L2[L2 Association]
+        L2[L2 Metadata]
         L3[L3 Integration]
-        L4[L4 Reasoning]
-        L5[L5 Executive]
-        L6[L6 Meta]
+        L4[L4 Graph]
+        L5[L5 Assembly]
+        L6[L6 Governance]
         L1 --> L2 --> L3 --> L4 --> L5 --> L6
     end
 
@@ -20,7 +20,7 @@ flowchart TB
         F[Architecture]
         T[Retrieval]
         P[Data]
-        O[Operations]
+        O[Observability]
         L[Security]
     end
 
@@ -28,7 +28,7 @@ flowchart TB
         Domains[62+ Domains]
         Hubs[18 Knowledge Hubs]
         Links[Graph Links]
-        Path[Pathways]
+        Routes[Domain Routes]
     end
 
     layers --> clusters
@@ -40,14 +40,14 @@ flowchart TB
 
 ```
 knowledge-corpus/
-├── cortex/L1-sensory … L6-meta    # Processing layers
-├── lobes/                           # Functional clusters
+├── processing-layers/L1-ingestion … L6-governance
+├── clusters/                        # Functional domain groupings
 ├── domains/                         # Technology categories
 ├── hubs/                            # Knowledge clusters
-├── synapses/                        # Hub-to-hub graph links
-├── pathways/                        # Inter-cluster routes
+├── graph-links/                     # Hub-to-hub graph links
+├── domain-routes/                   # Inter-cluster routes
 ├── memory/working|episodic|…        # Retention tiers
-└── reflexes/                        # Quick-reference FAQs
+└── quick-reference/                 # FAQ index
 ```
 
 ## Knowledge hubs (18)
@@ -62,9 +62,9 @@ Advanced: `extends`, `validates`, `synthesizes`, `triggers`, `derived_from`, `te
 
 ## GraphRouter
 
-Region-aware graph expansion in `brain/graph/neural_router.py`:
+Region-aware graph expansion in `brain/graph/graph_router.py`:
 
-- Graph links and pathways receive retrieval score boosts
+- Graph links and domain routes receive retrieval score boosts
 - 4-hop traversal, 16 max expanded documents
 - Enabled via `config/brain.yaml` → `graph.advanced_routing: true`
 
@@ -72,7 +72,7 @@ Region-aware graph expansion in `brain/graph/neural_router.py`:
 
 | File | Purpose |
 |------|---------|
-| `data/brain/neural-map.json` | Catalog index with per-region counts |
+| `data/brain/catalog-index.json` | Catalog index with per-region counts |
 | `data/brain/architecture-manifest.json` | Architecture registry |
 | `config/brain_architecture.yaml` | Master architecture specification |
 

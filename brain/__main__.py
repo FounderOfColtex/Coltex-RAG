@@ -38,10 +38,6 @@ def cmd_report(args: argparse.Namespace) -> None:
     print(json.dumps(brain.report(), indent=2))
 
 
-def cmd_pulse(args: argparse.Namespace) -> None:
-    cmd_report(args)
-
-
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Coltex")
     parser.add_argument("--config", default="config/brain.yaml")
@@ -62,9 +58,6 @@ def main(argv: list[str] | None = None) -> None:
 
     p_report = sub.add_parser("report", help="Corpus architecture report")
     p_report.set_defaults(func=cmd_report)
-
-    p_pulse = sub.add_parser("pulse", help="Deprecated alias for report")
-    p_pulse.set_defaults(func=cmd_pulse)
 
     args = parser.parse_args(argv)
     args.func(args)

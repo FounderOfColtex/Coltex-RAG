@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about vector_search"
 ```
 
 
-**Lobe:** `thalamus`
+**Cluster:** `routing`

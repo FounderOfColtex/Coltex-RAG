@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Observability Stack"
 doc_type: architecture_decision
 category: observability
 hub: observability_stack
-lobe: occipital
-tags: [hub, neural-cluster, observability_stack]
-see_also: [CORTEX-00001]
+cluster: observability
+tags: [hub, knowledge-cluster, observability_stack]
+see_also: [ARCH-00001]
 ---
 
 # Observability Stack
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - OpenTelemetry
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - Grafana
 - Structured Logging
 
-## Lobe assignment
-**occipital** lobe · tier `association`
+## Cluster assignment
+**observability** cluster · tier `association`
 
 ## Document types in this hub
 runbook, architecture_decision, troubleshooting, benchmark, best_practices
 
 ## GraphRAG
 All documents with `hub: observability_stack` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Data Ingestion Pipeline"
 doc_type: architecture_decision
 category: data_quality
 hub: data_pipeline
-lobe: parietal
-tags: [hub, neural-cluster, data_pipeline]
-see_also: [CORTEX-00001]
+cluster: data
+tags: [hub, knowledge-cluster, data_pipeline]
+see_also: [ARCH-00001]
 ---
 
 # Data Ingestion Pipeline
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - ETL
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - Schema Validation
 - Deduplication
 
-## Lobe assignment
-**parietal** lobe · tier `association`
+## Cluster assignment
+**data** cluster · tier `association`
 
 ## Document types in this hub
 architecture_decision, runbook, code_walkthrough, benchmark, migration_guide
 
 ## GraphRAG
 All documents with `hub: data_pipeline` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

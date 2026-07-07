@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Agent Orchestrator"
 doc_type: architecture_decision
 category: agentic
 hub: agent_orchestrator
-lobe: frontal
-tags: [hub, neural-cluster, agent_orchestrator]
-see_also: [CORTEX-00001]
+cluster: architecture
+tags: [hub, knowledge-cluster, agent_orchestrator]
+see_also: [ARCH-00001]
 ---
 
 # Agent Orchestrator
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - ReAct
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - Memory Buffer
 - Planning Loop
 
-## Lobe assignment
-**frontal** lobe · tier `executive`
+## Cluster assignment
+**architecture** cluster · tier `executive`
 
 ## Document types in this hub
 architecture_decision, deep_dive, code_walkthrough, evaluation, benchmark
 
 ## GraphRAG
 All documents with `hub: agent_orchestrator` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

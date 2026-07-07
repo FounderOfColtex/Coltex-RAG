@@ -22,8 +22,8 @@ class GraphIndex:
         self.advanced_routing = advanced_routing
         self._router = None
         if advanced_routing:
-            from brain.graph.neural_router import NeuralRouter
-            self._router = NeuralRouter(kb, max_hops=max_hops, max_extra=max_extra)
+            from brain.graph.graph_router import GraphRouter
+            self._router = GraphRouter(kb, max_hops=max_hops, max_extra=max_extra)
 
     def expand(self, seeds: list[Document]) -> list[ScoredDocument]:
         if self._router:

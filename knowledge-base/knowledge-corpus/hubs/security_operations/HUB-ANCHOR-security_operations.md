@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Security Operations Center"
 doc_type: architecture_decision
 category: security
 hub: security_operations
-lobe: amygdala
-tags: [hub, neural-cluster, security_operations]
-see_also: [CORTEX-00001]
+cluster: priority
+tags: [hub, knowledge-cluster, security_operations]
+see_also: [ARCH-00001]
 ---
 
 # Security Operations Center
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - SIEM
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - Zero Trust
 - Secrets Management
 
-## Lobe assignment
-**amygdala** lobe · tier `autonomic`
+## Cluster assignment
+**priority** cluster · tier `operations`
 
 ## Document types in this hub
 runbook, incident_report, architecture_decision, troubleshooting, best_practices
 
 ## GraphRAG
 All documents with `hub: security_operations` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

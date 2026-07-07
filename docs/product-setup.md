@@ -43,7 +43,7 @@ make audit-distribution
 | Embeddings | `data/product/embeddings/embeddings.jsonl` |
 | Graph | `data/product/graph/edges.jsonl` |
 | Manifest | `data/product/manifest.json` |
-| Catalog index | `data/brain/neural-map.json` |
+| Catalog index | `data/brain/catalog-index.json` |
 
 ## Corpus generation tiers
 

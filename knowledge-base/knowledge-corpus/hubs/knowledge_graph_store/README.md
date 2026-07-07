@@ -12,4 +12,4 @@ Neural hub `knowledge_graph_store` — a connected cluster of documents sharing 
 deep_dive, architecture_decision, benchmark, code_walkthrough, evaluation
 
 
-**Lobe:** `thalamus` · **Tier:** `association`
+**Cluster:** `routing` · **Tier:** `association`

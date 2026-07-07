@@ -1,4 +1,4 @@
-.PHONY: install clean index retrieve stats report pulse \
+.PHONY: install clean index retrieve stats report \
         corpus corpus-advanced corpus-grow corpus-mega corpus-report \
         generate generate-smoke generate-mega generate-ultra generate-hyper \
         expand-curated-kb \
@@ -33,8 +33,8 @@ corpus-report:
 corpus-structure:
 	python3 scripts/knowledge_corpus.py structure
 
-corpus-synapses:
-	python3 scripts/knowledge_corpus.py synapses
+corpus-links:
+	python3 scripts/knowledge_corpus.py graph-links
 
 # Coltex retrieval engine
 index:
@@ -47,9 +47,6 @@ stats:
 	python3 -m brain stats
 
 report:
-	python3 -m brain report
-
-pulse:
 	python3 -m brain report
 
 # Corpus generation

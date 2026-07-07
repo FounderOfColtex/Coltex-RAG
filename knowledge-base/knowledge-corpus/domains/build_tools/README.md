@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about build_tools"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

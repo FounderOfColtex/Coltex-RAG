@@ -2,6 +2,21 @@
 
 All notable changes to the Coltex product package are documented here.
 
+## [4.2.2] - 2026-07-07
+
+### Changed — Enterprise terminology (Phase 4)
+
+- Renamed corpus regions: `lobes/` → `clusters/`, `synapses/` → `graph-links/`, `pathways/` → `domain-routes/`, `reflexes/` → `quick-reference/`, `cortex/` → `processing-layers/`
+- Renamed standalone regions: `hippocampus/` → `retention/`, `cerebellum/` → `automation/`, `brainstem/` → `operations/`, `thalamus/` → `routing/`, `amygdala/` → `priority/`
+- Functional cluster slugs: `frontal` → `architecture`, `temporal` → `retrieval`, `parietal` → `data`, `occipital` → `observability`, `limbic` → `security`
+- Processing layer slugs: `L1_sensory` → `L1_ingestion`, `L2_association` → `L2_metadata`, `L4_reasoning` → `L4_graph`, `L5_executive` → `L5_assembly`, `L6_meta` → `L6_governance`
+- `brain/graph/neural_router.py` → `graph_router.py` (`NeuralRouter` → `GraphRouter`)
+- `data/brain/neural-map.json` → `catalog-index.json`
+- Generated artifact prefixes: `SYNAPSE-*` → `LINK-*`, `REFLEX-*` → `FAQ-*`, `PATHWAY-*` → `ROUTE-*`
+- Doc types: `neural_pathway` → `domain_route`, `synapse_map` → `graph_link_map`
+- Removed deprecated `brain pulse` CLI alias
+- Makefile: `corpus-synapses` → `corpus-links`
+
 ## [4.2.1] - 2026-07-07
 
 ### Changed — Professional terminology
@@ -10,7 +25,7 @@ All notable changes to the Coltex product package are documented here.
 - Renamed `scripts/living_brain.py` → `scripts/knowledge_corpus.py`
 - Replaced "Living Brain" / "Hypercortex" wording with **Knowledge Corpus** / **Knowledge Architecture**
 - Hub `coltex_living_brain` → `coltex_knowledge_core`
-- CLI `brain pulse` → `brain report` (pulse retained as alias)
+- CLI `brain pulse` → `brain report`
 - Makefile targets: `corpus`, `corpus-advanced`, `corpus-grow`, `corpus-report`
 
 ## [4.2.0] - 2026-07-07

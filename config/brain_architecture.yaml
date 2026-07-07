@@ -1,83 +1,83 @@
 # Coltex Advanced Knowledge Corpus Architecture
-# Multi-layer neural knowledge system — lobes, pathways, memory tiers, cortex layers
+# Multi-layer knowledge system — functional clusters, domain routes, memory tiers, processing layers
 
 architecture:
   version: "2.0"
   codename: knowledge_architecture
   tiers:
-    - sensory       # L1 ingestion & raw signal
-    - association   # L2-L4 domain linking
-    - executive     # L5-L6 reasoning & meta
-    - autonomic     # reflexes, brainstem
+    - ingestion      # L1 document intake
+    - association    # L2-L4 domain linking
+    - executive      # L5-L6 context assembly & governance
+    - operations     # quick reference, runbooks, health checks
 
-# ─── Cortical layers (L1–L6) ───────────────────────────────────────────────
-cortex_layers:
-  L1_sensory:
-    path: cortex/L1-sensory
-    role: Raw document ingestion signals, chunk boundaries, embedding triggers
+# ─── Processing layers (L1–L6) ───────────────────────────────────────────────
+processing_layers:
+  L1_ingestion:
+    path: processing-layers/L1-ingestion
+    role: Raw document ingestion, chunk boundaries, embedding triggers
     latency_ms: 5
-  L2_association:
-    path: cortex/L2-association
+  L2_metadata:
+    path: processing-layers/L2-metadata
     role: Domain tagging, metadata extraction, initial graph edges
     latency_ms: 15
   L3_integration:
-    path: cortex/L3-integration
+    path: processing-layers/L3-integration
     role: Cross-domain pattern matching, hub assignment
     latency_ms: 30
-  L4_reasoning:
-    path: cortex/L4-reasoning
-    role: Multi-hop GraphRAG, synapse traversal, ADR chains
+  L4_graph:
+    path: processing-layers/L4-graph
+    role: Multi-hop GraphRAG, graph-link traversal, ADR chains
     latency_ms: 80
-  L5_executive:
-    path: cortex/L5-executive
+  L5_assembly:
+    path: processing-layers/L5-assembly
     role: Context assembly, reranking, faithfulness checks
     latency_ms: 120
-  L6_meta:
-    path: cortex/L6-meta
-    role: Brain identity, architecture docs, pulse orchestration
+  L6_governance:
+    path: processing-layers/L6-governance
+    role: Corpus identity, architecture docs, catalog orchestration
     latency_ms: 200
 
-# ─── Brain lobes (functional regions) ──────────────────────────────────────
-lobes:
-  frontal:
-    path: lobes/frontal
+# ─── Functional clusters (domain groupings) ────────────────────────────────
+functional_clusters:
+  architecture:
+    path: clusters/architecture
     role: Planning, ADRs, architecture decisions, agentic workflows
     domains: [architecture, agentic, api_design, microservices, clean_architecture, domain_driven_design]
-  temporal:
-    path: lobes/temporal
+  retrieval:
+    path: clusters/retrieval
     role: Language models, embeddings, NLP, prompt engineering
     domains: [rag, embeddings, prompt_engineering, fine_tuning, chunking, retrieval]
-  parietal:
-    path: lobes/parietal
+  data:
+    path: clusters/data
     role: Data structures, SQL, vector math, indexing
     domains: [sql, postgresql, mongodb, redis, vector_stores, vector_search, indexing]
-  occipital:
-    path: lobes/occipital
+  observability:
+    path: clusters/observability
     role: Observability signals, dashboards, tracing patterns
     domains: [observability, performance, debugging, mlops]
-  limbic:
-    path: lobes/limbic
-    role: Memory, incidents, security emotional weight (priority)
+  security:
+    path: clusters/security
+    role: Access control, incidents, compliance, data quality
     domains: [security, incidents, memory, data_quality]
-  cerebellum:
-    path: cerebellum
-    role: Motor coordination — CI/CD, automation, reflex execution
+  automation:
+    path: automation
+    role: CI/CD, infrastructure automation, deployment pipelines
     domains: [ci_cd, docker, kubernetes, github_actions, gitlab_ci, terraform]
-  brainstem:
-    path: brainstem
-    role: Autonomic ops — always-on runbooks, health checks
+  operations:
+    path: operations
+    role: Always-on runbooks, health checks, platform operations
     domains: [runbook, incidents, linux, nginx]
-  hippocampus:
-    path: hippocampus
+  retention:
+    path: retention
     role: Long-term memory consolidation, episodic recall
     memory_tiers: [episodic, semantic, procedural]
-  thalamus:
-    path: thalamus
-    role: Sensory relay — routes queries to correct lobe/domain
+  routing:
+    path: routing
+    role: Query routing to correct cluster and domain
     domains: [graphrag, retrieval, vector_search]
-  amygdala:
-    path: amygdala
-    role: Priority & alert routing — security, incidents, SLA breaches
+  priority:
+    path: priority
+    role: Priority and alert routing — security, incidents, SLA breaches
     domains: [security, incidents, performance]
 
 # ─── Memory tiers ──────────────────────────────────────────────────────────
@@ -100,13 +100,13 @@ memory:
     capacity_docs: 100000
     role: Runbooks, tutorials, how-to guides
 
-# ─── Neural pathways (inter-lobe routes) ───────────────────────────────────
-pathway_types:
+# ─── Domain route types (inter-cluster routes) ─────────────────────────────
+route_types:
   - excitatory      # strengthens retrieval weight
   - inhibitory      # suppresses conflicting docs
   - modulatory      # adjusts rerank score
   - associative     # default cross-link
-  - commissural     # lobe-to-lobe bridge
+  - commissural     # cluster-to-cluster bridge
 
 # ─── Advanced relationship types (GraphRAG edges) ─────────────────────────
 relationship_types:
@@ -132,68 +132,68 @@ relationship_types:
 # ─── Knowledge hub registry (expanded) ─────────────────────────────────────
 hub_registry:
   - slug: auth_service
-    lobe: limbic
+    cluster: security
     tier: executive
   - slug: indexing_pipeline
-    lobe: parietal
+    cluster: data
     tier: association
   - slug: graphrag_engine
-    lobe: thalamus
+    cluster: routing
     tier: executive
   - slug: payment_service
-    lobe: frontal
+    cluster: architecture
     tier: executive
   - slug: ci_cd_platform
-    lobe: cerebellum
-    tier: autonomic
+    cluster: automation
+    tier: operations
   - slug: coltex_knowledge_core
-    lobe: frontal
-    tier: meta
+    cluster: architecture
+    tier: governance
   - slug: vector_store_cluster
-    lobe: parietal
+    cluster: data
     tier: association
   - slug: embedding_service
-    lobe: temporal
-    tier: sensory
+    cluster: retrieval
+    tier: ingestion
   - slug: agent_orchestrator
-    lobe: frontal
+    cluster: architecture
     tier: executive
   - slug: observability_stack
-    lobe: occipital
+    cluster: observability
     tier: association
   - slug: rag_retrieval_core
-    lobe: temporal
+    cluster: retrieval
     tier: executive
   - slug: security_operations
-    lobe: amygdala
-    tier: autonomic
+    cluster: priority
+    tier: operations
   - slug: data_pipeline
-    lobe: parietal
+    cluster: data
     tier: association
   - slug: llm_inference_gateway
-    lobe: temporal
+    cluster: retrieval
     tier: executive
   - slug: knowledge_graph_store
-    lobe: thalamus
+    cluster: routing
     tier: association
   - slug: incident_command
-    lobe: amygdala
-    tier: autonomic
+    cluster: priority
+    tier: operations
   - slug: ml_training_pipeline
-    lobe: occipital
+    cluster: observability
     tier: association
   - slug: api_gateway
-    lobe: frontal
+    cluster: architecture
     tier: executive
 
 # ─── Scale targets ─────────────────────────────────────────────────────────
 scale:
   domains: 62
   hubs: 18
-  lobes: 10
-  cortex_layers: 6
+  functional_clusters: 10
+  processing_layers: 6
   memory_tiers: 4
-  pathway_types: 5
+  route_types: 5
   relationship_types: 16
   target_documents: 250000
   target_graph_edges: 1000000

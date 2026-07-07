@@ -1,0 +1,33 @@
+---
+id: LINK-00124
+title: "Graph Link: embedding_service ↔ api_gateway"
+doc_type: deep_dive
+category: graphrag
+hub: coltex_knowledge_core
+tags: [graph-link, graph, embedding_service, api_gateway]
+related: [HUB-EMBEDDING_SERVICE, HUB-API_GATEWAY]
+see_also: [HUB-EMBEDDING_SERVICE, HUB-API_GATEWAY]
+depends_on: [HUB-EMBEDDING_SERVICE]
+---
+
+# Graph Link: embedding_service → api_gateway
+
+Cross-domain connection in the Coltex knowledge graph.
+
+## Connection type
+**calls** — documents in `embedding_service` calls into `api_gateway`.
+
+## Source hub
+- Hub: `embedding_service`
+- Anchor: `HUB-EMBEDDING_SERVICE`
+
+## Target hub
+- Hub: `api_gateway`
+- Anchor: `HUB-API_GATEWAY`
+
+## Traversal hint
+When querying either domain, GraphRAG expansion follows this graph link for multi-hop context.
+
+## Coltex note
+Graph links are first-class edges. The retrieval pipeline uses `see_also` and `depends_on`
+to surface related knowledge across domain boundaries.

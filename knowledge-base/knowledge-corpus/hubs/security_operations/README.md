@@ -12,4 +12,4 @@ Neural hub `security_operations` — a connected cluster of documents sharing `h
 runbook, incident_report, architecture_decision, troubleshooting, best_practices
 
 
-**Lobe:** `amygdala` · **Tier:** `autonomic`
+**Cluster:** `priority` · **Tier:** `autonomic`

@@ -12,4 +12,4 @@ Neural hub `ml_training_pipeline` — a connected cluster of documents sharing `
 architecture_decision, benchmark, code_walkthrough, evaluation, migration_guide
 
 
-**Lobe:** `occipital` · **Tier:** `association`
+**Cluster:** `observability` · **Tier:** `association`

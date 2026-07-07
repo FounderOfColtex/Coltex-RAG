@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Vector Store Cluster"
 doc_type: architecture_decision
 category: vector_stores
 hub: vector_store_cluster
-lobe: parietal
-tags: [hub, neural-cluster, vector_store_cluster]
-see_also: [CORTEX-00001]
+cluster: data
+tags: [hub, knowledge-cluster, vector_store_cluster]
+see_also: [ARCH-00001]
 ---
 
 # Vector Store Cluster
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - ChromaDB
@@ -20,12 +20,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - Sharding
 - Replication
 
-## Lobe assignment
-**parietal** lobe · tier `association`
+## Cluster assignment
+**data** cluster · tier `association`
 
 ## Document types in this hub
 architecture_decision, benchmark, runbook, api_reference, deep_dive, troubleshooting
 
 ## GraphRAG
 All documents with `hub: vector_store_cluster` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

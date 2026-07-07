@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about cqrs"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

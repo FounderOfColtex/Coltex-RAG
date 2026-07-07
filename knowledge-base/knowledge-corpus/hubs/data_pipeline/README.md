@@ -12,4 +12,4 @@ Neural hub `data_pipeline` — a connected cluster of documents sharing `hub: da
 architecture_decision, runbook, code_walkthrough, benchmark, migration_guide
 
 
-**Lobe:** `parietal` · **Tier:** `association`
+**Cluster:** `data` · **Tier:** `association`

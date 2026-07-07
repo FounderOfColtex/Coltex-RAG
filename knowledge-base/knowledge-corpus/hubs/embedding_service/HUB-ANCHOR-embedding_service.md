@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Embedding Service"
 doc_type: architecture_decision
 category: embeddings
 hub: embedding_service
-lobe: temporal
-tags: [hub, neural-cluster, embedding_service]
-see_also: [CORTEX-00001]
+cluster: retrieval
+tags: [hub, knowledge-cluster, embedding_service]
+see_also: [ARCH-00001]
 ---
 
 # Embedding Service
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - MiniLM
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - GPU Pipeline
 - Model Registry
 
-## Lobe assignment
-**temporal** lobe · tier `sensory`
+## Cluster assignment
+**retrieval** cluster · tier `ingestion`
 
 ## Document types in this hub
 api_reference, architecture_decision, benchmark, code_walkthrough, best_practices
 
 ## GraphRAG
 All documents with `hub: embedding_service` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

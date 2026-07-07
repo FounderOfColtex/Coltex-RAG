@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about package_managers"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

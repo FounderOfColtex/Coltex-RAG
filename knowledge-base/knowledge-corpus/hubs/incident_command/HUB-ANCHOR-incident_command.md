@@ -4,14 +4,14 @@ title: "Knowledge Cluster: Incident Command System"
 doc_type: architecture_decision
 category: incidents
 hub: incident_command
-lobe: amygdala
-tags: [hub, neural-cluster, incident_command]
-see_also: [CORTEX-00001]
+cluster: priority
+tags: [hub, knowledge-cluster, incident_command]
+see_also: [ARCH-00001]
 ---
 
 # Incident Command System
 
-Central knowledge cluster for the Coltex Knowledge Corpus.
+Central knowledge cluster for the Coltex corpus.
 
 ## Components
 - PagerDuty
@@ -19,12 +19,12 @@ Central knowledge cluster for the Coltex Knowledge Corpus.
 - SLA Tracking
 - War Room
 
-## Lobe assignment
-**amygdala** lobe · tier `autonomic`
+## Cluster assignment
+**priority** cluster · tier `operations`
 
 ## Document types in this hub
 runbook, incident_report, troubleshooting, best_practices, meeting_notes
 
 ## GraphRAG
 All documents with `hub: incident_command` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.

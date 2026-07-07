@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about github"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

@@ -12,4 +12,4 @@ Neural hub `observability_stack` — a connected cluster of documents sharing `h
 runbook, architecture_decision, troubleshooting, benchmark, best_practices
 
 
-**Lobe:** `occipital` · **Tier:** `association`
+**Cluster:** `observability` · **Tier:** `association`

@@ -133,33 +133,36 @@ class Coltex:
             if "/domains/" in path:
                 cat = path.split("/domains/")[1].split("/")[0]
                 domains[cat] = domains.get(cat, 0) + 1
-            if "/lobes/" in path:
-                cluster = path.split("/lobes/")[1].split("/")[0]
+            if "/clusters/" in path:
+                cluster = path.split("/clusters/")[1].split("/")[0]
                 clusters[cluster] = clusters.get(cluster, 0) + 1
+            for standalone in ("automation", "operations", "retention", "routing", "priority"):
+                if f"/{standalone}/" in path:
+                    clusters[standalone] = clusters.get(standalone, 0) + 1
             if "/memory/" in path:
                 tier = path.split("/memory/")[1].split("/")[0]
                 memory_tiers[tier] = memory_tiers.get(tier, 0) + 1
             for part in path.split("/"):
-                if part.startswith("L") and "-" in part and "/cortex/" in path:
+                if part.startswith("L") and "-" in part and "/processing-layers/" in path:
                     processing_layers[part] = processing_layers.get(part, 0) + 1
-            if "/synapses/" in path:
+            if "/graph-links/" in path:
                 graph_links += 1
-            if "/pathways/" in path:
+            if "/domain-routes/" in path:
                 pathways += 1
-            if "/reflexes/" in path:
+            if "/quick-reference/" in path:
                 quick_reference += 1
             if doc.hub:
                 hubs[doc.hub] = hubs.get(doc.hub, 0) + 1
             edges += len(doc.related) + sum(len(v) for v in doc.relationships.values())
 
-        neural_map_path = Path("data/brain/neural-map.json")
+        catalog_path = Path("data/brain/catalog-index.json")
         arch_path = Path("data/brain/architecture-manifest.json")
-        neural_map: dict = {}
+        catalog: dict = {}
         arch_manifest: dict = {}
-        if neural_map_path.exists():
+        if catalog_path.exists():
             import json
             try:
-                neural_map = json.loads(neural_map_path.read_text(encoding="utf-8"))
+                catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 pass
         if arch_path.exists():
@@ -184,20 +187,16 @@ class Coltex:
                 "memory_tiers": memory_tiers,
                 "processing_layers": processing_layers,
                 "graph_links": graph_links,
-                "pathways": pathways,
+                "domain_routes": pathways,
                 "quick_reference": quick_reference,
                 "graph_edges": edges,
                 "graph_density": round(edges / max(base["documents"], 1), 2),
-                "catalog_index": neural_map_path.exists(),
+                "catalog_index": catalog_path.exists(),
                 "architecture_manifest": arch_path.exists(),
                 "catalog_summary": {
-                    "total_documents": neural_map.get("total_documents"),
-                    "pathways": neural_map.get("pathways"),
-                    "hubs_registered": neural_map.get("hubs_registered"),
-                } if neural_map else None,
+                    "total_documents": catalog.get("total_documents"),
+                    "domain_routes": catalog.get("domain_routes"),
+                    "hubs_registered": catalog.get("hubs_registered"),
+                } if catalog else None,
             },
         }
-
-    def pulse(self) -> dict[str, Any]:
-        """Deprecated alias for report()."""
-        return self.report()

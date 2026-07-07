@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about event_driven"
 ```
 
 
-**Lobe:** `general`
+**Cluster:** `general`

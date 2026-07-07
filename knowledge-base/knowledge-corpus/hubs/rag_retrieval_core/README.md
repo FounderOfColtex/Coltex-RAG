@@ -12,4 +12,4 @@ Neural hub `rag_retrieval_core` — a connected cluster of documents sharing `hu
 deep_dive, benchmark, evaluation, architecture_decision, api_reference
 
 
-**Lobe:** `temporal` · **Tier:** `executive`
+**Cluster:** `retrieval` · **Tier:** `executive`

@@ -12,4 +12,4 @@ Neural hub `agent_orchestrator` — a connected cluster of documents sharing `hu
 architecture_decision, deep_dive, code_walkthrough, evaluation, benchmark
 
 
-**Lobe:** `frontal` · **Tier:** `executive`
+**Cluster:** `architecture` · **Tier:** `executive`

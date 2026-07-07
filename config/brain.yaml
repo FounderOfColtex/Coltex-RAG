@@ -61,8 +61,8 @@ document_types:
   - deep_dive
   - anti_patterns
   - case_study
-  - neural_pathway
-  - synapse_map
+  - domain_route
+  - graph_link_map
 
 relationship_types:
   - depends_on

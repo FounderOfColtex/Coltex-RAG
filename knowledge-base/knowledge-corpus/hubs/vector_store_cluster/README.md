@@ -13,4 +13,4 @@ Neural hub `vector_store_cluster` — a connected cluster of documents sharing `
 architecture_decision, benchmark, runbook, api_reference, deep_dive, troubleshooting
 
 
-**Lobe:** `parietal` · **Tier:** `association`
+**Cluster:** `data` · **Tier:** `association`

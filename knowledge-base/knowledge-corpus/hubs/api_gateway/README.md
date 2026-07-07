@@ -12,4 +12,4 @@ Neural hub `api_gateway` — a connected cluster of documents sharing `hub: api_
 api_reference, architecture_decision, runbook, troubleshooting, best_practices
 
 
-**Lobe:** `frontal` · **Tier:** `executive`
+**Cluster:** `architecture` · **Tier:** `executive`

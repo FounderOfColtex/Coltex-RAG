@@ -13,7 +13,7 @@ ARCH_PATH = ROOT / "config" / "brain_architecture.yaml"
 
 
 @dataclass(frozen=True)
-class CortexLayer:
+class ProcessingLayer:
     slug: str
     path: str
     role: str
@@ -21,7 +21,7 @@ class CortexLayer:
 
 
 @dataclass(frozen=True)
-class BrainLobe:
+class FunctionalCluster:
     slug: str
     path: str
     role: str
@@ -40,7 +40,7 @@ class MemoryTier:
 @dataclass(frozen=True)
 class HubRegistryEntry:
     slug: str
-    lobe: str
+    cluster: str
     tier: str
 
 
@@ -50,11 +50,12 @@ def load_architecture(path: Path | None = None) -> dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
-def cortex_layers(cfg: dict[str, Any] | None = None) -> list[CortexLayer]:
+def processing_layers(cfg: dict[str, Any] | None = None) -> list[ProcessingLayer]:
     cfg = cfg or load_architecture()
-    out: list[CortexLayer] = []
-    for slug, data in (cfg.get("cortex_layers") or {}).items():
-        out.append(CortexLayer(
+    out: list[ProcessingLayer] = []
+    layer_cfg = cfg.get("processing_layers") or cfg.get("cortex_layers") or {}
+    for slug, data in layer_cfg.items():
+        out.append(ProcessingLayer(
             slug=slug,
             path=data["path"],
             role=data["role"],
@@ -63,11 +64,12 @@ def cortex_layers(cfg: dict[str, Any] | None = None) -> list[CortexLayer]:
     return out
 
 
-def brain_lobes(cfg: dict[str, Any] | None = None) -> list[BrainLobe]:
+def functional_clusters(cfg: dict[str, Any] | None = None) -> list[FunctionalCluster]:
     cfg = cfg or load_architecture()
-    out: list[BrainLobe] = []
-    for slug, data in (cfg.get("lobes") or {}).items():
-        out.append(BrainLobe(
+    out: list[FunctionalCluster] = []
+    cluster_cfg = cfg.get("functional_clusters") or cfg.get("lobes") or {}
+    for slug, data in cluster_cfg.items():
+        out.append(FunctionalCluster(
             slug=slug,
             path=data["path"],
             role=data["role"],
@@ -97,37 +99,40 @@ def hub_registry(cfg: dict[str, Any] | None = None) -> list[HubRegistryEntry]:
     for entry in cfg.get("hub_registry") or []:
         out.append(HubRegistryEntry(
             slug=entry["slug"],
-            lobe=entry["lobe"],
+            cluster=entry.get("cluster") or entry.get("lobe", "architecture"),
             tier=entry["tier"],
         ))
     return out
 
 
-def domain_to_lobe(cfg: dict[str, Any] | None = None) -> dict[str, str]:
+def domain_to_cluster(cfg: dict[str, Any] | None = None) -> dict[str, str]:
     mapping: dict[str, str] = {}
-    for lobe in brain_lobes(cfg):
-        for domain in lobe.domains:
-            mapping[domain] = lobe.slug
+    for cluster in functional_clusters(cfg):
+        for domain in cluster.domains:
+            mapping[domain] = cluster.slug
     return mapping
 
 
 def all_architecture_domains(cfg: dict[str, Any] | None = None) -> list[str]:
     cfg = cfg or load_architecture()
     domains: set[str] = set()
-    for lobe in brain_lobes(cfg):
-        domains.update(lobe.domains)
+    for cluster in functional_clusters(cfg):
+        domains.update(cluster.domains)
     for cat in (cfg.get("knowledge_corpus", {}) or {}).get("priority_domains", []):
         domains.add(cat)
     return sorted(domains)
 
 
-PATHWAY_TYPES = (
+ROUTE_TYPES = (
     "excitatory",
     "inhibitory",
     "modulatory",
     "associative",
     "commissural",
 )
+
+# Backward-compatible alias used by legacy corpus scripts
+PATHWAY_TYPES = ROUTE_TYPES
 
 ADVANCED_RELATIONSHIPS = (
     "extends",

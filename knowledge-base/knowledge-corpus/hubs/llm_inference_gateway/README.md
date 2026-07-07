@@ -12,4 +12,4 @@ Neural hub `llm_inference_gateway` — a connected cluster of documents sharing 
 api_reference, architecture_decision, runbook, benchmark, troubleshooting
 
 
-**Lobe:** `temporal` · **Tier:** `executive`
+**Cluster:** `retrieval` · **Tier:** `executive`

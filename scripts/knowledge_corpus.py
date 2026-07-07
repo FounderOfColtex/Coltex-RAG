@@ -21,13 +21,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from brain_schema import CATEGORIES, KNOWLEDGE_HUBS
 from brain_architecture import (
-    PATHWAY_TYPES,
-    brain_lobes,
-    cortex_layers,
-    domain_to_lobe,
+    ROUTE_TYPES,
+    domain_to_cluster,
+    functional_clusters,
     hub_registry,
     load_architecture,
     memory_tiers,
+    processing_layers,
 )
 from corpus_templates import TOPICS
 from expand_curated_kb import (
@@ -41,46 +41,46 @@ from expand_curated_kb import (
 from generate_corpus import build_document
 
 CORPUS_ROOT = ROOT / "knowledge-base" / "knowledge-corpus"
-NEURAL_MAP_PATH = ROOT / "data" / "brain" / "neural-map.json"
+CATALOG_INDEX_PATH = ROOT / "data" / "brain" / "catalog-index.json"
 ARCHITECTURE_PATH = ROOT / "data" / "brain" / "architecture-manifest.json"
 
-PATHWAY_TEMPLATE = """---
-id: PATHWAY-{pathway_id}
-title: "Domain Pathway: {source_lobe} → {target_lobe} ({pathway_type})"
-doc_type: neural_pathway
+ROUTE_TEMPLATE = """---
+id: ROUTE-{route_id}
+title: "Domain Route: {source_cluster} → {target_cluster} ({route_type})"
+doc_type: domain_route
 category: graphrag
 hub: coltex_knowledge_core
-lobe_source: {source_lobe}
-lobe_target: {target_lobe}
-pathway_type: {pathway_type}
-tags: [pathway, {pathway_type}, {source_lobe}, {target_lobe}]
+cluster_source: {source_cluster}
+cluster_target: {target_cluster}
+route_type: {route_type}
+tags: [domain-route, {route_type}, {source_cluster}, {target_cluster}]
 related: [{source_anchor}, {target_anchor}]
 see_also: [{source_anchor}, {target_anchor}]
 synthesizes: [{source_anchor}]
 ---
 
-# Domain Pathway: {source_lobe} → {target_lobe}
+# Domain Route: {source_cluster} → {target_cluster}
 
-**Type:** `{pathway_type}` · **Tier:** association layer
+**Type:** `{route_type}` · **Tier:** association layer
 
 ## Route
-Documents in lobe `{source_lobe}` connect to lobe `{target_lobe}` via this commissural pathway.
+Documents in cluster `{source_cluster}` connect to cluster `{target_cluster}` via this cross-cluster route.
 
 ## Traversal weight
-| Pathway type | Graph boost |
-|--------------|-------------|
+| Route type | Graph boost |
+|------------|-------------|
 | excitatory | +15% retrieval score |
 | inhibitory | suppresses conflicts |
 | modulatory | adjusts rerank |
 | associative | default cross-link |
-| commissural | inter-lobe bridge |
+| commissural | inter-cluster bridge |
 
 ## Anchors
-- Source: `{source_anchor}` ({source_lobe})
-- Target: `{target_anchor}` ({target_lobe})
+- Source: `{source_anchor}` ({source_cluster})
+- Target: `{target_anchor}` ({target_cluster})
 
 ## Coltex Knowledge Architecture
-Region-aware graph routing (`GraphRouter`) prioritizes documents in `/pathways/` during GraphRAG expansion.
+Region-aware graph routing (`GraphRouter`) prioritizes documents in `/domain-routes/` during GraphRAG expansion.
 """
 
 HUB_ANCHOR_TEMPLATE = """---
@@ -89,9 +89,9 @@ title: "Knowledge Cluster: {hub_title}"
 doc_type: architecture_decision
 category: {category}
 hub: {hub_slug}
-lobe: {lobe}
+cluster: {cluster}
 tags: [hub, knowledge-cluster, {hub_slug}]
-see_also: [CORTEX-00001]
+see_also: [ARCH-00001]
 ---
 
 # {hub_title}
@@ -101,15 +101,15 @@ Central knowledge cluster for the Coltex corpus.
 ## Components
 {components}
 
-## Lobe assignment
-**{lobe}** lobe · tier `{tier}`
+## Cluster assignment
+**{cluster}** cluster · tier `{tier}`
 
 ## Document types in this hub
 {doc_types}
 
 ## GraphRAG
 All documents with `hub: {hub_slug}` form a traversable cluster.
-Synapses and pathways connect this hub to other neural clusters.
+Graph links and domain routes connect this hub to other knowledge clusters.
 """
 
 DOMAIN_README = """# {name} Domain
@@ -140,13 +140,13 @@ Knowledge cluster `{slug}` — documents sharing `hub: {slug}` metadata.
 {doc_types}
 """
 
-SYNAPSE_TEMPLATE = """---
-id: SYNAPSE-{synapse_id}
+GRAPH_LINK_TEMPLATE = """---
+id: LINK-{link_id}
 title: "Graph Link: {source_hub} ↔ {target_hub}"
 doc_type: deep_dive
 category: graphrag
 hub: coltex_knowledge_core
-tags: [synapse, graph, {source_hub}, {target_hub}]
+tags: [graph-link, graph, {source_hub}, {target_hub}]
 related: [{source_doc}, {target_doc}]
 see_also: [{source_doc}, {target_doc}]
 depends_on: [{source_doc}]
@@ -168,7 +168,7 @@ Cross-domain connection in the Coltex knowledge graph.
 - Anchor: `{target_doc}`
 
 ## Traversal hint
-When querying either domain, GraphRAG expansion follows this synapse for multi-hop context.
+When querying either domain, GraphRAG expansion follows this graph link for multi-hop context.
 
 ## Coltex note
 Graph links are first-class edges. The retrieval pipeline uses `see_also` and `depends_on`
@@ -183,49 +183,46 @@ def _ensure_structure() -> dict[str, Path]:
         "root": CORPUS_ROOT,
         "domains": CORPUS_ROOT / "domains",
         "hubs": CORPUS_ROOT / "hubs",
-        "synapses": CORPUS_ROOT / "synapses",
-        "pathways": CORPUS_ROOT / "pathways",
-        "cortex": CORPUS_ROOT / "cortex",
+        "graph_links": CORPUS_ROOT / "graph-links",
+        "domain_routes": CORPUS_ROOT / "domain-routes",
+        "processing_layers": CORPUS_ROOT / "processing-layers",
         "memory": CORPUS_ROOT / "memory",
-        "reflexes": CORPUS_ROOT / "reflexes",
-        "lobes": CORPUS_ROOT / "lobes",
-        "hippocampus": CORPUS_ROOT / "hippocampus",
-        "cerebellum": CORPUS_ROOT / "cerebellum",
-        "brainstem": CORPUS_ROOT / "brainstem",
-        "thalamus": CORPUS_ROOT / "thalamus",
-        "amygdala": CORPUS_ROOT / "amygdala",
+        "quick_reference": CORPUS_ROOT / "quick-reference",
+        "clusters": CORPUS_ROOT / "clusters",
+        "retention": CORPUS_ROOT / "retention",
+        "automation": CORPUS_ROOT / "automation",
+        "operations": CORPUS_ROOT / "operations",
+        "routing": CORPUS_ROOT / "routing",
+        "priority": CORPUS_ROOT / "priority",
     }
     for key, path in list(dirs.items()):
         if key in ("root",):
             continue
         path.mkdir(parents=True, exist_ok=True)
 
-    # Cortical layers L1–L6
-    for layer in cortex_layers(cfg):
+    for layer in processing_layers(cfg):
         layer_path = CORPUS_ROOT / layer.path
         layer_path.mkdir(parents=True, exist_ok=True)
         readme = layer_path / "README.md"
         if not readme.exists():
             readme.write_text(
-                f"# Cortex {layer.slug}\n\n**Role:** {layer.role}\n\n**Latency target:** {layer.latency_ms}ms\n",
+                f"# Processing Layer {layer.slug}\n\n**Role:** {layer.role}\n\n**Latency target:** {layer.latency_ms}ms\n",
                 encoding="utf-8",
             )
 
-    # Brain lobes
-    lobe_paths: dict[str, Path] = {}
-    for lobe in brain_lobes(cfg):
-        lp = CORPUS_ROOT / lobe.path
-        lp.mkdir(parents=True, exist_ok=True)
-        lobe_paths[lobe.slug] = lp
-        readme = lp / "README.md"
+    cluster_paths: dict[str, Path] = {}
+    for cluster in functional_clusters(cfg):
+        cp = CORPUS_ROOT / cluster.path
+        cp.mkdir(parents=True, exist_ok=True)
+        cluster_paths[cluster.slug] = cp
+        readme = cp / "README.md"
         if not readme.exists():
-            domains = ", ".join(lobe.domains) or "cross-domain"
+            domains = ", ".join(cluster.domains) or "cross-domain"
             readme.write_text(
-                f"# {lobe.slug.title()} Lobe\n\n**Role:** {lobe.role}\n\n**Domains:** {domains}\n",
+                f"# {cluster.slug.title()} Cluster\n\n**Role:** {cluster.role}\n\n**Domains:** {domains}\n",
                 encoding="utf-8",
             )
 
-    # Memory tiers
     for tier in memory_tiers(cfg):
         mp = CORPUS_ROOT / tier.path
         mp.mkdir(parents=True, exist_ok=True)
@@ -237,24 +234,22 @@ def _ensure_structure() -> dict[str, Path]:
                 encoding="utf-8",
             )
 
-    # Domain folders — all categories + lobe-mapped domains
-    d2l = domain_to_lobe(cfg)
-    all_domains = sorted(set(list(d2l.keys()) + list(CATEGORIES)))
+    d2c = domain_to_cluster(cfg)
+    all_domains = sorted(set(list(d2c.keys()) + list(CATEGORIES)))
     domain_paths: dict[str, Path] = {}
     for cat in all_domains:
         d = dirs["domains"] / cat
         d.mkdir(parents=True, exist_ok=True)
         readme = d / "README.md"
-        lobe = d2l.get(cat, "general")
+        cluster = d2c.get(cat, "general")
         if not readme.exists():
             readme.write_text(
                 DOMAIN_README.format(name=cat.replace("_", " ").title(), category=cat)
-                + f"\n\n**Lobe:** `{lobe}`\n",
+                + f"\n\n**Cluster:** `{cluster}`\n",
                 encoding="utf-8",
             )
         domain_paths[cat] = d
 
-    # Hub folders
     hub_paths: dict[str, Path] = {}
     registry = {e.slug: e for e in hub_registry(cfg)}
     for hub in KNOWLEDGE_HUBS:
@@ -265,7 +260,7 @@ def _ensure_structure() -> dict[str, Path]:
             components = "\n".join(f"- {c}" for c in hub.components)
             doc_types = ", ".join(hub.doc_types)
             entry = registry.get(hub.slug)
-            lobe_info = f"\n\n**Lobe:** `{entry.lobe}` · **Tier:** `{entry.tier}`" if entry else ""
+            cluster_info = f"\n\n**Cluster:** `{entry.cluster}` · **Tier:** `{entry.tier}`" if entry else ""
             readme.write_text(
                 HUB_README.format(
                     title=hub.title,
@@ -273,46 +268,46 @@ def _ensure_structure() -> dict[str, Path]:
                     components=components,
                     doc_types=doc_types,
                 )
-                + lobe_info,
+                + cluster_info,
                 encoding="utf-8",
             )
         hub_paths[hub.slug] = h
 
-    cortex_manifest = dirs["cortex"] / "L6-meta" / "BRAIN_IDENTITY.md"
-    cortex_manifest.parent.mkdir(parents=True, exist_ok=True)
-    if not cortex_manifest.exists():
-        cortex_manifest.write_text(_cortex_identity(), encoding="utf-8")
+    identity_path = dirs["processing_layers"] / "L6-governance" / "CORPUS_IDENTITY.md"
+    identity_path.parent.mkdir(parents=True, exist_ok=True)
+    if not identity_path.exists():
+        identity_path.write_text(_corpus_identity(), encoding="utf-8")
 
     root_readme = CORPUS_ROOT / "README.md"
     root_readme.write_text(_knowledge_corpus_readme(), encoding="utf-8")
 
     dirs["domain_paths"] = domain_paths  # type: ignore
     dirs["hub_paths"] = hub_paths  # type: ignore
-    dirs["lobe_paths"] = lobe_paths  # type: ignore
+    dirs["cluster_paths"] = cluster_paths  # type: ignore
     return dirs
 
 
-def _cortex_identity() -> str:
+def _corpus_identity() -> str:
     return """---
-id: CORTEX-00001
-title: Coltex Knowledge Architecture — Knowledge Corpus Identity
+id: ARCH-00001
+title: Coltex Knowledge Architecture — Corpus Identity
 doc_type: deep_dive
 category: rag
 hub: coltex_knowledge_core
-lobe: frontal
-tags: [cortex, identity, knowledge-corpus, knowledge_architecture]
+cluster: architecture
+tags: [architecture, identity, knowledge-corpus, knowledge_architecture]
 ---
 
 # Coltex Knowledge Architecture v2
 
-The meta-layer of Coltex — a **multi-tier knowledge architecture** for enterprise-scale RAG datasets.
+The governance layer of Coltex — a **multi-tier knowledge architecture** for enterprise-scale RAG datasets.
 
 ## Processing tiers
 | Tier | Regions |
 |------|---------|
 | Ingestion (L1) | Raw document intake, chunk signals |
 | Association (L2-L4) | Domain linking, cluster assignment, GraphRAG |
-| Executive (L5-L6) | Context assembly, meta-reasoning |
+| Executive (L5-L6) | Context assembly, governance |
 | Operations | Quick reference, runbooks, health checks |
 
 ## Functional clusters
@@ -321,7 +316,7 @@ The meta-layer of Coltex — a **multi-tier knowledge architecture** for enterpr
 | Architecture | ADRs, agentic systems, API design |
 | Retrieval | RAG, embeddings, LLM integration |
 | Data | SQL, vectors, indexing |
-| Operations | Observability, MLOps |
+| Observability | Monitoring, MLOps |
 | Security | Access control, incidents, compliance |
 | Automation | CI/CD, infrastructure |
 
@@ -341,14 +336,14 @@ Enterprise RAG knowledge corpus with **6 processing layers**, **10 functional cl
 ## Structure
 ```
 knowledge-corpus/
-├── cortex/L1-sensory … L6-meta    # Processing layers
-├── lobes/                           # Functional clusters
+├── processing-layers/L1-ingestion … L6-governance
+├── clusters/                        # Functional domain groupings
 ├── domains/                         # 62+ technology domains
 ├── hubs/                            # 18 knowledge clusters
-├── synapses/                        # Hub-to-hub graph links
-├── pathways/                        # Inter-cluster routes
+├── graph-links/                     # Hub-to-hub graph links
+├── domain-routes/                   # Inter-cluster routes
 ├── memory/                          # Tiered retention stores
-└── reflexes/                        # Quick-reference FAQs
+└── quick-reference/                 # FAQ index
 ```
 
 ## Build
@@ -362,7 +357,7 @@ make corpus-mega                  # 10,000 documents
 ```bash
 make index
 python3 -m brain report
-python3 -m brain retrieve "Explain domain pathway routing" --context
+python3 -m brain retrieve "Explain domain route routing" --context
 ```
 """
 
@@ -373,7 +368,6 @@ def grow_domains(count: int, dry_run: bool = False) -> dict:
     domain_paths: dict[str, Path] = structure["domain_paths"]  # type: ignore
 
     start_num = _existing_chunk_max() + 1
-    # Also scan knowledge-corpus for max chunk
     for path in CORPUS_ROOT.rglob("CHUNK-*.md"):
         m = re.match(r"CHUNK-(\d+)", path.name)
         if m:
@@ -411,13 +405,13 @@ def grow_domains(count: int, dry_run: bool = False) -> dict:
     }
 
 
-def wire_synapses(dry_run: bool = False) -> dict:
-    """Create synapse documents linking knowledge hubs."""
+def wire_graph_links(dry_run: bool = False) -> dict:
+    """Create graph-link documents connecting knowledge hubs."""
     structure = _ensure_structure()
-    synapse_dir: Path = structure["synapses"]
+    link_dir: Path = structure["graph_links"]
     hubs = KNOWLEDGE_HUBS
     written = 0
-    synapse_ids: list[str] = []
+    link_ids: list[str] = []
 
     relations = [
         ("depends_on", "depends on"),
@@ -431,13 +425,13 @@ def wire_synapses(dry_run: bool = False) -> dict:
             if source.slug == target.slug:
                 continue
             relation, relation_desc = relations[(i + j) % len(relations)]
-            synapse_num = i * len(hubs) + j
-            synapse_id = f"{synapse_num:05d}"
+            link_num = i * len(hubs) + j
+            link_id = f"{link_num:05d}"
             source_doc = f"HUB-{source.slug.upper().replace('-', '_')}"
             target_doc = f"HUB-{target.slug.upper().replace('-', '_')}"
 
-            content = SYNAPSE_TEMPLATE.format(
-                synapse_id=synapse_id,
+            content = GRAPH_LINK_TEMPLATE.format(
+                link_id=link_id,
                 source_hub=source.slug,
                 target_hub=target.slug,
                 source_doc=source_doc,
@@ -445,91 +439,91 @@ def wire_synapses(dry_run: bool = False) -> dict:
                 relation=relation,
                 relation_desc=relation_desc,
             )
-            path = synapse_dir / f"SYNAPSE-{synapse_id}-{source.slug}-to-{target.slug}.md"
+            path = link_dir / f"LINK-{link_id}-{source.slug}-to-{target.slug}.md"
             if not dry_run:
                 path.write_text(content, encoding="utf-8")
             written += 1
-            synapse_ids.append(f"SYNAPSE-{synapse_id}")
+            link_ids.append(f"LINK-{link_id}")
 
-    return {"synapses_written": written, "synapse_ids": synapse_ids[:10], "dry_run": dry_run}
+    return {"graph_links_written": written, "link_ids": link_ids[:10], "dry_run": dry_run}
 
 
-def seed_reflexes(dry_run: bool = False) -> dict:
-    """Fast-path reflex documents (instant-recall FAQs)."""
+def seed_quick_reference(dry_run: bool = False) -> dict:
+    """Quick-reference FAQ documents for common queries."""
     structure = _ensure_structure()
-    reflex_dir: Path = structure["reflexes"]
+    faq_dir: Path = structure["quick_reference"]
     prompts = [
         ("What is Coltex?", "Coltex is an enterprise RAG knowledge corpus with hybrid retrieval."),
         ("What is GraphRAG?", "GraphRAG expands vector hits via typed document relationship edges."),
         ("How do I query the corpus?", "python3 -m brain retrieve \"your question\" --context"),
         ("How do I expand the corpus?", "make corpus-grow COUNT=500"),
-        ("What is a graph link?", "A cross-hub edge in knowledge-corpus/synapses/."),
+        ("What is a graph link?", "A cross-hub edge in knowledge-corpus/graph-links/."),
     ]
     written = 0
     for i, (q, a) in enumerate(prompts):
         content = f"""---
-id: REFLEX-{i:05d}
+id: FAQ-{i:05d}
 title: "{q}"
 doc_type: faq
 category: rag
 hub: coltex_knowledge_core
-tags: [reflex, faq, instant-recall]
+tags: [faq, quick-reference]
 ---
 
 # {q}
 
 {a}
 
-## Reflex path
-Quick-reference nodes optimized for common queries during corpus reporting and retrieval.
+## Quick reference
+FAQ entries optimized for common queries during corpus reporting and retrieval.
 """
-        path = reflex_dir / f"REFLEX-{i:05d}-{ _slugify(q) }.md"
+        path = faq_dir / f"FAQ-{i:05d}-{ _slugify(q) }.md"
         if not dry_run:
             path.write_text(content, encoding="utf-8")
         written += 1
-    return {"reflexes_written": written, "dry_run": dry_run}
+    return {"quick_reference_written": written, "dry_run": dry_run}
 
 
-def wire_pathways(dry_run: bool = False) -> dict:
-    """Create inter-lobe neural pathway documents."""
+def wire_domain_routes(dry_run: bool = False) -> dict:
+    """Create inter-cluster domain route documents."""
     structure = _ensure_structure()
-    pathway_dir: Path = structure["pathways"]
-    lobes = brain_lobes()
+    route_dir: Path = structure["domain_routes"]
+    clusters = functional_clusters()
     written = 0
 
-    for i, source in enumerate(lobes):
-        for j, target in enumerate(lobes):
+    for i, source in enumerate(clusters):
+        for j, target in enumerate(clusters):
             if source.slug == target.slug:
                 continue
-            pathway_type = PATHWAY_TYPES[(i + j) % len(PATHWAY_TYPES)]
-            pid = f"{i:02d}{j:02d}"
-            source_anchor = f"LOBE-{source.slug.upper()}"
-            target_anchor = f"LOBE-{target.slug.upper()}"
-            content = PATHWAY_TEMPLATE.format(
-                pathway_id=pid,
-                source_lobe=source.slug,
-                target_lobe=target.slug,
-                pathway_type=pathway_type,
+            route_type = ROUTE_TYPES[(i + j) % len(ROUTE_TYPES)]
+            rid = f"{i:02d}{j:02d}"
+            source_anchor = f"CLUSTER-{source.slug.upper()}"
+            target_anchor = f"CLUSTER-{target.slug.upper()}"
+            content = ROUTE_TEMPLATE.format(
+                route_id=rid,
+                source_cluster=source.slug,
+                target_cluster=target.slug,
+                route_type=route_type,
                 source_anchor=source_anchor,
                 target_anchor=target_anchor,
             )
-            path = pathway_dir / f"PATHWAY-{pid}-{source.slug}-to-{target.slug}.md"
+            path = route_dir / f"ROUTE-{rid}-{source.slug}-to-{target.slug}.md"
             if not dry_run:
                 path.write_text(content, encoding="utf-8")
             written += 1
 
-    return {"pathways_written": written, "dry_run": dry_run}
+    return {"domain_routes_written": written, "dry_run": dry_run}
 
 
 def seed_hub_anchors(dry_run: bool = False) -> dict:
-    """Anchor document per neural hub."""
+    """Anchor document per knowledge hub."""
     structure = _ensure_structure()
     registry = {e.slug: e for e in hub_registry()}
     written = 0
 
     for hub in KNOWLEDGE_HUBS:
         entry = registry.get(hub.slug)
-        lobe = entry.lobe if entry else "frontal"
+        cluster = entry.cluster if entry else "architecture"
         tier = entry.tier if entry else "association"
         components = "\n".join(f"- {c}" for c in hub.components)
         doc_types = ", ".join(hub.doc_types)
@@ -538,7 +532,7 @@ def seed_hub_anchors(dry_run: bool = False) -> dict:
             hub_title=hub.title,
             hub_slug=hub.slug,
             category=hub.category,
-            lobe=lobe,
+            cluster=cluster,
             tier=tier,
             components=components,
             doc_types=doc_types,
@@ -551,21 +545,21 @@ def seed_hub_anchors(dry_run: bool = False) -> dict:
     return {"hub_anchors_written": written, "dry_run": dry_run}
 
 
-def seed_cortex_layers(dry_run: bool = False) -> dict:
-    """One architecture blueprint per cortical layer."""
+def seed_processing_layers(dry_run: bool = False) -> dict:
+    """One architecture blueprint per processing layer."""
     cfg = load_architecture()
     written = 0
-    for i, layer in enumerate(cortex_layers(cfg)):
+    for i, layer in enumerate(processing_layers(cfg)):
         content = f"""---
-id: CORTEX-L{i + 1}
-title: "Cortical Layer {layer.slug}"
+id: LAYER-{i + 1}
+title: "Processing Layer {layer.slug}"
 doc_type: architecture_decision
 category: rag
 hub: coltex_knowledge_core
-tags: [cortex, {layer.slug}, knowledge_architecture]
+tags: [processing-layer, {layer.slug}, knowledge_architecture]
 ---
 
-# Cortical Layer: {layer.slug}
+# Processing Layer: {layer.slug}
 
 **Role:** {layer.role}
 
@@ -576,14 +570,14 @@ tags: [cortex, {layer.slug}, knowledge_architecture]
 `{layer.path}`
 
 ## Integration
-Layer {layer.slug} feeds forward into the next cortical layer during retrieval pipeline execution.
-Documents stored here carry elevated GraphRAG boost during neural routing.
+Layer {layer.slug} feeds forward into the next processing layer during retrieval pipeline execution.
+Documents stored here carry elevated GraphRAG boost during graph routing.
 """
-        layer_path = CORPUS_ROOT / layer.path / f"CORTEX-LAYER-{layer.slug}.md"
+        layer_path = CORPUS_ROOT / layer.path / f"LAYER-{layer.slug}.md"
         if not dry_run:
             layer_path.write_text(content, encoding="utf-8")
         written += 1
-    return {"cortex_layers_written": written, "dry_run": dry_run}
+    return {"processing_layers_written": written, "dry_run": dry_run}
 
 
 def seed_memory_samples(dry_run: bool = False) -> dict:
@@ -593,7 +587,7 @@ def seed_memory_samples(dry_run: bool = False) -> dict:
         ("working", "Active query context buffer", "working memory for current retrieval session"),
         ("episodic", "Incident timeline 2026-07-07", "episodic record of indexing pipeline degradation"),
         ("semantic", "GraphRAG edge type taxonomy", "stable semantic fact about relationship types"),
-        ("procedural", "Index rebuild runbook", "procedural steps for full brain reindex"),
+        ("procedural", "Index rebuild runbook", "procedural steps for full corpus reindex"),
     ]
     for tier_slug, title, body in samples:
         for tier in memory_tiers():
@@ -624,24 +618,24 @@ tags: [memory, {tier_slug}]
 
 
 def build_architecture_manifest() -> dict:
-    """Write architecture-manifest.json alongside neural-map."""
+    """Write architecture-manifest.json alongside catalog index."""
     cfg = load_architecture()
     arch = cfg.get("architecture", {})
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "codename": arch.get("codename", "knowledge_architecture"),
         "version": arch.get("version", "2.0"),
-        "cortex_layers": len(cortex_layers(cfg)),
-        "lobes": len(brain_lobes(cfg)),
+        "processing_layers": len(processing_layers(cfg)),
+        "functional_clusters": len(functional_clusters(cfg)),
         "memory_tiers": len(memory_tiers(cfg)),
         "hubs": len(KNOWLEDGE_HUBS),
-        "pathway_types": len(PATHWAY_TYPES),
+        "route_types": len(ROUTE_TYPES),
         "relationship_types": len(cfg.get("relationship_types", {}).get("core", []))
         + len(cfg.get("relationship_types", {}).get("advanced", [])),
         "scale_targets": cfg.get("scale", {}),
-        "lobe_registry": [
-            {"slug": l.slug, "domains": list(l.domains), "role": l.role}
-            for l in brain_lobes(cfg)
+        "cluster_registry": [
+            {"slug": c.slug, "domains": list(c.domains), "role": c.role}
+            for c in functional_clusters(cfg)
         ],
     }
     ARCHITECTURE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -649,45 +643,58 @@ def build_architecture_manifest() -> dict:
     return manifest
 
 
-def build_neural_map() -> dict:
-    """Scan entire knowledge base and write neural-map.json manifest."""
+def build_catalog_index() -> dict:
+    """Scan entire knowledge base and write catalog-index.json manifest."""
     kb_root = ROOT / "knowledge-base"
     domains: dict[str, int] = {}
     hubs: dict[str, int] = {}
     doc_types: dict[str, int] = {}
     total = 0
-    synapses = 0
-    reflexes = 0
-    pathways = 0
-    lobes: dict[str, int] = {}
-    cortex_layer_counts: dict[str, int] = {}
+    graph_links = 0
+    quick_reference = 0
+    domain_routes = 0
+    clusters: dict[str, int] = {}
+    processing_layer_counts: dict[str, int] = {}
     memory_counts: dict[str, int] = {}
+
+    region_markers = {
+        "graph-links": "graph_links",
+        "quick-reference": "quick_reference",
+        "domain-routes": "domain_routes",
+        "clusters": "clusters",
+        "processing-layers": "processing_layers",
+        "memory": "memory",
+    }
 
     for path in kb_root.rglob("*.md"):
         if "_excluded" in path.parts or "_seed" in path.parts:
             continue
         total += 1
         parts = path.parts
-        if "synapses" in parts:
-            synapses += 1
-        if "reflexes" in parts:
-            reflexes += 1
-        if "pathways" in parts:
-            pathways += 1
-        if "lobes" in parts:
-            idx = parts.index("lobes") if "lobes" in parts else -1
-            if idx >= 0 and idx + 1 < len(parts):
-                lobes[parts[idx + 1]] = lobes.get(parts[idx + 1], 0) + 1
-        if "cortex" in parts:
-            for p in parts:
-                if p.startswith("L") and "-" in p:
-                    cortex_layer_counts[p] = cortex_layer_counts.get(p, 0) + 1
+        if "graph-links" in parts:
+            graph_links += 1
+        if "quick-reference" in parts:
+            quick_reference += 1
+        if "domain-routes" in parts:
+            domain_routes += 1
+        if "clusters" in parts:
+            idx = parts.index("clusters")
+            if idx + 1 < len(parts):
+                clusters[parts[idx + 1]] = clusters.get(parts[idx + 1], 0) + 1
+        for standalone in ("automation", "operations", "retention", "routing", "priority"):
+            if standalone in parts:
+                clusters[standalone] = clusters.get(standalone, 0) + 1
+        if "processing-layers" in parts:
+            idx = parts.index("processing-layers")
+            if idx + 1 < len(parts):
+                layer_dir = parts[idx + 1]
+                if layer_dir.startswith("L") and "-" in layer_dir:
+                    processing_layer_counts[layer_dir] = processing_layer_counts.get(layer_dir, 0) + 1
         if "memory" in parts:
-            idx = list(parts).index("memory") if "memory" in parts else -1
-            if idx >= 0 and idx + 1 < len(parts):
+            idx = list(parts).index("memory")
+            if idx + 1 < len(parts):
                 memory_counts[parts[idx + 1]] = memory_counts.get(parts[idx + 1], 0) + 1
         if "domains" in parts:
-            parts = path.parts
             idx = parts.index("domains")
             if idx + 1 < len(parts):
                 cat = parts[idx + 1]
@@ -711,7 +718,7 @@ def build_neural_map() -> dict:
 
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "brain": "coltex-knowledge_architecture",
+        "corpus": "coltex-knowledge_architecture",
         "architecture_version": "2.0",
         "codename": "knowledge_architecture",
         "total_documents": total,
@@ -719,21 +726,21 @@ def build_neural_map() -> dict:
         "domain_count": len(domains),
         "hubs": hubs,
         "hub_count": len(hubs),
-        "lobes": lobes,
-        "lobe_count": len(lobes),
-        "cortex_layers": cortex_layer_counts,
+        "functional_clusters": clusters,
+        "cluster_count": len(clusters),
+        "processing_layers": processing_layer_counts,
         "memory_tiers": memory_counts,
         "doc_types": doc_types,
-        "synapses": synapses,
-        "pathways": pathways,
-        "reflexes": reflexes,
+        "graph_links": graph_links,
+        "domain_routes": domain_routes,
+        "quick_reference": quick_reference,
         "categories_available": len(CATEGORIES),
         "topics_available": len(TOPICS),
         "hubs_registered": len(KNOWLEDGE_HUBS),
     }
 
-    NEURAL_MAP_PATH.parent.mkdir(parents=True, exist_ok=True)
-    NEURAL_MAP_PATH.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    CATALOG_INDEX_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CATALOG_INDEX_PATH.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     build_architecture_manifest()
     return manifest
 
@@ -746,15 +753,15 @@ def bootstrap_advanced(grow: int = 500, dry_run: bool = False) -> dict:
         "bootstrap": "knowledge_architecture-v2",
         "structure": True,
         "grow": grow_stats,
-        "synapses": wire_synapses(dry_run=dry_run),
-        "pathways": wire_pathways(dry_run=dry_run),
+        "graph_links": wire_graph_links(dry_run=dry_run),
+        "domain_routes": wire_domain_routes(dry_run=dry_run),
         "hub_anchors": seed_hub_anchors(dry_run=dry_run),
-        "cortex_layers": seed_cortex_layers(dry_run=dry_run),
+        "processing_layers": seed_processing_layers(dry_run=dry_run),
         "memory": seed_memory_samples(dry_run=dry_run),
-        "reflexes": seed_reflexes(dry_run=dry_run),
-        "neural_map": {
-            "total_documents": build_neural_map().get("total_documents") if not dry_run else 0,
-            "path": str(NEURAL_MAP_PATH),
+        "quick_reference": seed_quick_reference(dry_run=dry_run),
+        "catalog_index": {
+            "total_documents": build_catalog_index().get("total_documents") if not dry_run else 0,
+            "path": str(CATALOG_INDEX_PATH),
             "architecture_manifest": str(ARCHITECTURE_PATH),
         },
         "dry_run": dry_run,
@@ -762,7 +769,7 @@ def bootstrap_advanced(grow: int = 500, dry_run: bool = False) -> dict:
 
 
 def bootstrap(grow: int = 300, dry_run: bool = False) -> dict:
-    """Full knowledge corpus bootstrap: structure + grow + synapses + reflexes + map."""
+    """Full knowledge corpus bootstrap: structure + grow + graph links + FAQs + catalog."""
     return bootstrap_advanced(grow=grow, dry_run=dry_run)
 
 
@@ -770,7 +777,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Coltex Knowledge Corpus orchestrator")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_boot = sub.add_parser("bootstrap", help="Scaffold + grow + wire + neural map")
+    p_boot = sub.add_parser("bootstrap", help="Scaffold + grow + wire + catalog index")
     p_boot.add_argument("--grow", type=int, default=300)
     p_boot.add_argument("--dry-run", action="store_true")
 
@@ -779,13 +786,13 @@ def main() -> None:
     p_grow.add_argument("--dry-run", action="store_true")
 
     sub.add_parser("structure", help="Create folder tree only")
-    sub.add_parser("synapses", help="Wire hub synapses")
-    sub.add_parser("reflexes", help="Seed reflex FAQs")
-    sub.add_parser("map", help="Rebuild neural-map.json")
+    sub.add_parser("graph-links", help="Wire hub graph links")
+    sub.add_parser("quick-reference", help="Seed FAQ quick reference")
+    sub.add_parser("map", help="Rebuild catalog-index.json")
 
-    sub.add_parser("pathways", help="Wire inter-lobe neural pathways")
+    sub.add_parser("domain-routes", help="Wire inter-cluster domain routes")
     sub.add_parser("hubs", help="Seed hub anchor documents")
-    sub.add_parser("cortex", help="Seed cortical layer blueprints")
+    sub.add_parser("layers", help="Seed processing layer blueprints")
     sub.add_parser("memory", help="Seed memory tier samples")
 
     p_adv = sub.add_parser("advanced", help="Full Knowledge Architecture v2 bootstrap")
@@ -802,29 +809,29 @@ def main() -> None:
         _ensure_structure()
         result = grow_domains(args.count, dry_run=args.dry_run)
         if not args.dry_run:
-            result["neural_map"] = build_neural_map()
+            result["catalog_index"] = build_catalog_index()
     elif args.command == "structure":
         result = {"structure": str(_ensure_structure()["root"])}
-    elif args.command == "synapses":
-        result = wire_synapses()
-        result["neural_map"] = build_neural_map()
-    elif args.command == "reflexes":
-        result = seed_reflexes()
-        result["neural_map"] = build_neural_map()
+    elif args.command == "graph-links":
+        result = wire_graph_links()
+        result["catalog_index"] = build_catalog_index()
+    elif args.command == "quick-reference":
+        result = seed_quick_reference()
+        result["catalog_index"] = build_catalog_index()
     elif args.command == "map":
-        result = build_neural_map()
-    elif args.command == "pathways":
-        result = wire_pathways()
-        result["neural_map"] = build_neural_map()
+        result = build_catalog_index()
+    elif args.command == "domain-routes":
+        result = wire_domain_routes()
+        result["catalog_index"] = build_catalog_index()
     elif args.command == "hubs":
         result = seed_hub_anchors()
-        result["neural_map"] = build_neural_map()
-    elif args.command == "cortex":
-        result = seed_cortex_layers()
-        result["neural_map"] = build_neural_map()
+        result["catalog_index"] = build_catalog_index()
+    elif args.command == "layers":
+        result = seed_processing_layers()
+        result["catalog_index"] = build_catalog_index()
     elif args.command == "memory":
         result = seed_memory_samples()
-        result["neural_map"] = build_neural_map()
+        result["catalog_index"] = build_catalog_index()
     else:
         result = {"error": "unknown command"}
 

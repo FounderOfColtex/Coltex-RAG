@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about domain_driven_design"
 ```
 
 
-**Lobe:** `frontal`
+**Cluster:** `architecture`

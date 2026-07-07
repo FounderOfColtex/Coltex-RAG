@@ -12,4 +12,4 @@ Neural hub `incident_command` — a connected cluster of documents sharing `hub:
 runbook, incident_report, troubleshooting, best_practices, meeting_notes
 
 
-**Lobe:** `amygdala` · **Tier:** `autonomic`
+**Cluster:** `priority` · **Tier:** `autonomic`

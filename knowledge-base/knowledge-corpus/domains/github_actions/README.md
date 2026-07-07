@@ -15,4 +15,4 @@ python3 -m brain retrieve "your question about github_actions"
 ```
 
 
-**Lobe:** `cerebellum`
+**Cluster:** `automation`
