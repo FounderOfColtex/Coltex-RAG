@@ -3,7 +3,7 @@
 **Effective date:** July 7, 2026  
 **Version:** 1.0  
 **Pricing:** Custom Quote  
-**Licensor:** Coltex
+**Licensor:** Elijah Maxwell / Coltex
 
 ---
 

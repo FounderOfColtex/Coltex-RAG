@@ -2,14 +2,11 @@
 
 Production-grade, graph-linked knowledge corpus for retrieval-augmented generation (RAG), AI agents, and domain-specific copilots. Coltex delivers pre-chunked vector exports, typed relationship graphs, optional embeddings, benchmark evidence, and a full compliance audit trail — ready for commercial deployment.
 
-[![Personal: $79](https://img.shields.io/badge/Personal-%2479-blue.svg)](PERSONAL-LICENSE.md)
-[![Professional: $399](https://img.shields.io/badge/Professional-%24399-orange.svg)](PROFESSIONAL-LICENSE.md)
-[![Enterprise: Custom Quote](https://img.shields.io/badge/Enterprise-Custom%20Quote-red.svg)](ENTERPRISE-LICENSE.md)
 [![Documents: 13k+](https://img.shields.io/badge/documents-13k%2B-green.svg)](docs/commercial/datasheet.md)
 [![Chunks: 83k+](https://img.shields.io/badge/chunks-83k%2B-orange.svg)](docs/commercial/datasheet.md)
 [![Graph edges: 52k+](https://img.shields.io/badge/edges-52k%2B-purple.svg)](docs/commercial/datasheet.md)
 [![Domains: 63](https://img.shields.io/badge/domains-63-blue.svg)](docs/commercial/datasheet.md)
-[![Audit: Passing](https://img.shields.io/badge/audit-passing-brightgreen.svg)](docs/product-licensing.md)
+[![Audit: Passing](https://img.shields.io/badge/audit-passing-brightgreen.svg)](docs/commercial/datasheet.md)
 
 ---
 
@@ -134,22 +131,7 @@ Commercial builds output to `data/product/`:
 | `manifest.json` | JSON | SHA-256 checksums and build provenance |
 | `benchmarks/` | JSONL | FAQ, retrieval gold, and RAG evaluation sets |
 
-Compliance artifacts include license documents, `NOTICE`, `PROVENANCE.md`, and `distribution_audit.json`.
-
----
-
-## Licensing
-
-Coltex is offered under four license tiers. Select the tier that matches your deployment scope and use case.
-
-| Tier | Price | Scope | License |
-|------|-------|-------|---------|
-| **Personal** | $79 USD (one-time) | Non-commercial, individual use | [PERSONAL-LICENSE.md](PERSONAL-LICENSE.md) |
-| **Professional** | $399 USD (one-time) | Commercial use — one legal entity | [PROFESSIONAL-LICENSE.md](PROFESSIONAL-LICENSE.md) |
-| **Enterprise** | Custom quote | Organization-wide deployment, multi-team, on-premises / private cloud | [ENTERPRISE-LICENSE.md](ENTERPRISE-LICENSE.md) |
-| **Dataset EULA** | Per agreement | Supplemental terms for enterprise dataset packages | [EULA.md](EULA.md) |
-
-Full tier comparison: [Product licensing](docs/product-licensing.md) · [SKU matrix](docs/commercial/sku-matrix.md)
+Compliance artifacts include `NOTICE`, `PROVENANCE.md`, and `distribution_audit.json`. Terms of use: [LICENSING.md](LICENSING.md).
 
 ---
 
@@ -162,6 +144,8 @@ Full tier comparison: [Product licensing](docs/product-licensing.md) · [SKU mat
 | Enterprise Curated | `make product-enterprise` | 12,993 | Production RAG deployment |
 | Premium Standard | `make product-premium-smoke` | 25,000 | Validation and evaluation |
 | Premium Hyper | `make product-hyper` | Uncapped | Maximum-scale production |
+
+Package and license comparison: [SKU matrix](docs/commercial/sku-matrix.md)
 
 ---
 
@@ -183,11 +167,11 @@ Architecture manifest: `data/brain/architecture-manifest.json`
 
 | Document | Description |
 |----------|-------------|
+| [Licensing](LICENSING.md) | License tiers, terms, and build commands |
 | [Product overview](docs/commercial/product-overview.md) | Commercial positioning and use cases |
 | [Technical datasheet](docs/commercial/datasheet.md) | Dataset specifications |
-| [SKU matrix](docs/commercial/sku-matrix.md) | Package and license comparison |
+| [SKU matrix](docs/commercial/sku-matrix.md) | Package comparison |
 | [Knowledge architecture](docs/architecture/knowledge-architecture.md) | Corpus structure and design |
-| [Product licensing](docs/product-licensing.md) | License terms and build commands |
 | [Product setup](docs/product-setup.md) | Build and deployment instructions |
 | [Provenance](knowledge-base/PROVENANCE.md) | Content origin and compliance |
 
@@ -195,6 +179,4 @@ Architecture manifest: `data/brain/architecture-manifest.json`
 
 ## Copyright
 
-Copyright © 2026 Coltex / FOUNDEROF-AIRIES-AGENT. All rights reserved.
-
-Use of this dataset is governed by the applicable license agreement: [Personal](PERSONAL-LICENSE.md), [Professional](PROFESSIONAL-LICENSE.md), [Enterprise](ENTERPRISE-LICENSE.md), or [Dataset EULA](EULA.md).
+Copyright © 2026 Elijah Maxwell / Coltex. All rights reserved. See [LICENSING.md](LICENSING.md) for terms of use.
