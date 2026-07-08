@@ -35,7 +35,7 @@ from runtime.security.gateway import SecurityGateway
 from runtime.ask.knowledge import AskKnowledge
 from runtime.processing.pipeline import ProcessingPipeline
 from runtime.sources.upload import SourceManager
-from runtime.studio.studio import KnowledgeStudio
+from runtime.studio.studio import ColtexCLI
 from runtime.v1.dashboard import V1Dashboard
 from runtime.v1.settings import SettingsStore
 
@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 class ColtexRuntime:
-    """Coltex Runtime — platform centerpiece with Knowledge Studio."""
+    """Coltex Runtime — local CLI knowledge platform."""
 
     def __init__(self, config_path: str | Path = "config/runtime.yaml"):
         self.config_path = Path(config_path)
@@ -73,7 +73,7 @@ class ColtexRuntime:
         self.explain = ExplainEngine(self.brain, self.monitor)
         self.security = SecurityGateway()
         self.api = APIGateway(self)
-        self.studio = KnowledgeStudio(self)
+        self.studio = ColtexCLI(self)
 
         self.sources = SourceManager()
         self.processing = ProcessingPipeline(self)
@@ -104,18 +104,24 @@ class ColtexRuntime:
         return {
             "runtime": "coltex-runtime",
             "version": self.config.get("version", "1.0.0"),
-            "platform": "Knowledge Operating System for AI",
-            "use_today": {
-                "knowledge_studio": "python3 -m runtime studio",
+            "platform": "Coltex V1 CLI",
+            "interface": "cli",
+            "commands": {
+                "status": "python3 -m runtime status",
+                "dashboard": "python3 -m runtime dashboard",
                 "upload": "python3 -m runtime upload file.pdf",
-                "ask_knowledge": "python3 -m runtime ask \"your question\"",
-                "health": "python3 -m runtime health",
+                "ask": "python3 -m runtime ask \"your question\"",
                 "search": "python3 -m runtime search \"query\"",
+                "health": "python3 -m runtime health",
+                "sources": "python3 -m runtime sources",
+                "knowledge": "python3 -m runtime knowledge",
+                "settings": "python3 -m runtime settings",
             },
             "coltex_v1": {
                 "tagline": "The AI Knowledge Platform for Modern Organizations",
                 "goal": "AI-ready intelligence in under 10 minutes",
                 "docs": "docs/product/coltex-v1.md",
+                "license": "MIT",
             },
             "engines": {
                 "intelligence": self.intelligence.stats(),
@@ -132,10 +138,9 @@ class ColtexRuntime:
                 "explain": {"status": "active"},
                 "security": self.security.stats(),
             },
-            "knowledge_studio": {
-                **self.config.get("knowledge_studio", {}),
+            "cli": {
+                **self.config.get("cli", {}),
                 "status": "active",
-                "command": "python3 -m runtime studio",
             },
         }
 

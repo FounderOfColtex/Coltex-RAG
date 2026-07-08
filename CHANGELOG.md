@@ -2,6 +2,16 @@
 
 All notable changes to the Coltex product package are documented here.
 
+## [4.9.0] - 2026-07-08
+
+### Changed — Coltex V1 is CLI-only, MIT licensed
+
+- **Removed web UI** — deleted Knowledge Studio server and static HTML; no website, no cloud
+- **CLI is the product** — `dashboard`, `sources`, `settings`, `knowledge` commands added; `studio` removed
+- **MIT License** — replaced all paid tiers, EULA, Personal/Professional/Enterprise licenses
+- **Removed commercial docs** — deleted `licenses/`, `docs/commercial/`, tier pricing configs
+- **Updated product configs** — `require_license` checks root `LICENSE` instead of EULA files
+
 ## [4.8.0] - 2026-07-08
 
 ### Added — Coltex V1 product

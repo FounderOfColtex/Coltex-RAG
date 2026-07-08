@@ -1,4 +1,4 @@
-"""Knowledge Studio — unified product surface."""
+"""Coltex CLI — command-line product surface."""
 
 from __future__ import annotations
 
@@ -9,16 +9,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-class KnowledgeStudio:
-    """
-    Knowledge Studio modules (all available via API/CLI today):
-
-    Explorer · Search · Graph · Analytics · Curator · Lifecycle · Plugins · Settings
-    """
+class ColtexCLI:
+    """CLI modules: explorer, search, analytics, curator, lifecycle, settings."""
 
     MODULES = [
-        "explorer", "search", "graph", "analytics", "curator",
-        "lifecycle", "plugins", "settings", "monitor", "explain",
+        "dashboard", "knowledge", "sources", "search", "ask",
+        "health", "settings", "curator", "monitor", "explain",
     ]
 
     def __init__(self, runtime):
@@ -27,24 +23,12 @@ class KnowledgeStudio:
         self._alerts_path.parent.mkdir(parents=True, exist_ok=True)
 
     def dashboard(self) -> dict[str, Any]:
-        health = self._rt.analytics.health()
-        curator = self._rt.curator.proactive_scan(save=False)
-        monitor = self._rt.monitor.snapshot()
-        return {
-            "studio": "Knowledge Studio",
-            "status": "active",
-            "modules": self.MODULES,
-            "health": health,
-            "curator_alerts": curator.get("alerts", [])[:10],
-            "monitor": monitor,
-            "connectors": self._rt.connectors.list_connectors(),
-            "memory": self._rt.memory.stats(),
-        }
+        return self._rt.v1.snapshot()
 
     def explorer(self, limit: int = 20, offset: int = 0) -> dict[str, Any]:
         docs = self._rt.brain.kb.documents[offset : offset + limit]
         return {
-            "module": "explorer",
+            "module": "knowledge",
             "total": len(self._rt.brain.kb.documents),
             "offset": offset,
             "limit": limit,

@@ -1,24 +1,16 @@
-# Excluded from Commercial Distribution
+# Excluded from Product Build
 
-Files in this directory are **not** included in the Coltex Product package
-(`make product`) and must not be shipped in commercial releases.
+These files are excluded from the default product build (`make product`).
 
 ## Why excluded
 
 These documents are procedural placeholder stubs generated from templates.
-They contain a single boilerplate paragraph and do not constitute substantive
-original documentation suitable for commercial distribution.
+They contain a single boilerplate paragraph and do not meet product quality standards.
 
 Example marker:
 
 > "This document provides detailed information on … as it relates to the
 > Coltex Enterprise AI Coding Chatbot …"
-
-## License status
-
-These files are quarantined from commercial distribution (see `knowledge-base/EULA.md`) but are
-quarantined because they do not meet product quality standards — not because of
-third-party copyright concerns.
 
 ## Subdirectories
 
@@ -27,8 +19,7 @@ third-party copyright concerns.
 | `boilerplate-stubs/` | Single-paragraph placeholder "supporting documents" | 50 |
 | `thin-stubs/` | Title-only incident reports and support tickets | 4 |
 
-
-Release scripts, Docker images, and tarballs must exclude:
+Release scripts and tarballs must exclude:
 
 - `knowledge-base/_excluded_from_distribution/`
 - `knowledge-base/generated/`

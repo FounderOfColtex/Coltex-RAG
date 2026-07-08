@@ -32,8 +32,8 @@ Additional metadata exported in `data/product/metadata/documents.json`:
 
 ### Clear licensing
 
-- All product artifacts carry `license: Coltex-EULA`
-- See [licenses/README.md](../licenses/README.md) and [licenses/eula.md](../licenses/eula.md)
+- All product artifacts carry `license: MIT`
+- See [LICENSE](../LICENSE)
 
 ### Regular updates
 

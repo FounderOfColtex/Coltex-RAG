@@ -1,5 +1,5 @@
 version: 1.0.0
-updated: 2026-07-07
+updated: 2026-07-08
 
 runtime:
   name: coltex-runtime
@@ -20,25 +20,22 @@ engines:
   security: runtime.security.gateway.SecurityGateway
   api: runtime.api.gateway.APIGateway
 
-knowledge_studio:
+cli:
+  interface: local
   modules:
-    - explorer
+    - dashboard
+    - knowledge
+    - sources
     - search
-    - graph
-    - analytics
+    - ask
     - health
+    - settings
     - curator
-    - lifecycle
-    - scheduler
-    - plugins
-    - connectors
     - monitor
     - explain
-  status: active
-  command: python3 -m runtime studio
 
 brain_config: config/brain.yaml
-product_config: config/product_enterprise.yaml
+product_config: config/product.yaml
 events_config: config/events.yaml
 dna_config: config/knowledge-dna.yaml
 evolution_config: config/knowledge-evolution.yaml

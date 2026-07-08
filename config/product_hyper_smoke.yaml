@@ -1,13 +1,9 @@
-# Coltex Premium RAG Dataset — local smoke test
-# Generates 25,000 premium documents for validation before Vast.ai hyper run
+# Coltex hyper-scale smoke test build
 
-name: Coltex Premium RAG Dataset (Smoke)
+name: Coltex Hyper Knowledge Base (Smoke)
 version: 2.1.0-smoke
-tier: premium-smoke
-price_usd: 1000
-license: Coltex-EULA
-eula: licenses/eula.md
-updated: 2026-07-07
+license: MIT
+updated: 2026-07-08
 
 generation:
   mega_multiplier: 100000000000
@@ -80,7 +76,7 @@ knowledge_base:
     - "**/_excluded_from_distribution/**"
 
 distribution:
-  require_eula: true
+  require_license: true
   require_provenance: true
   require_notice: true
   forbidden_body_markers:
@@ -97,7 +93,6 @@ quality:
   require_metadata_fields:
     - doc_id
     - title
-  require_license_header: true
   streaming_mode: true
 
 chunking:

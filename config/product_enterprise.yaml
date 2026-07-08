@@ -1,17 +1,10 @@
-# Coltex Enterprise RAG Vector Dataset — Enterprise tier
-# Full knowledge-corpus architecture · graph-linked · vector-ready · compliance-audited
+# Coltex knowledge base build — full curated corpus
 
-name: Coltex Enterprise RAG Vector Dataset
+name: Coltex Knowledge Base
 version: 3.0.0
-tier: enterprise
-price_usd: null
-pricing: custom_quote
-license: Coltex-Enterprise
-license_path: licenses/enterprise.md
-dataset_agreement: licenses/eula.md
-updated: 2026-07-07
+license: MIT
+updated: 2026-07-08
 
-# Full curated knowledge base including architecture corpus
 knowledge_base:
   paths:
     - knowledge-base
@@ -22,8 +15,7 @@ knowledge_base:
     - "**/_excluded_from_distribution/**"
 
 distribution:
-  require_enterprise_license: true
-  require_eula: true
+  require_license: true
   require_provenance: true
   require_notice: true
   forbidden_body_markers:
@@ -45,7 +37,6 @@ quality:
   require_metadata_fields:
     - doc_id
     - title
-  require_license_header: true
   curated_only: false
 
 chunking:
@@ -57,25 +48,21 @@ embeddings:
   model: sentence-transformers/all-MiniLM-L6-v2
   output_dir: data/product/embeddings
   batch_size: 64
-  max_chunks: 250000
 
 output:
   base_dir: data/product
   chunks: data/product/chunks/chunks.jsonl
-  catalog: data/product/catalog.jsonl
   graph: data/product/graph/edges.jsonl
   metadata: data/product/metadata/documents.json
   manifest: data/product/manifest.json
 
 benchmarks:
   output_dir: benchmarks
-  min_faq_pairs: 300
+  min_faq_pairs: 80
   include_rag_eval: true
   include_retrieval_gold: true
-  sample_from_catalog: 8000
 
 evaluation:
   top_k: 8
-  min_retrieval_recall: 0.48
-  min_metadata_accuracy: 0.92
-  sample_size: 200
+  min_retrieval_recall: 0.50
+  min_metadata_accuracy: 0.90

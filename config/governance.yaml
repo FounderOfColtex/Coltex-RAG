@@ -67,5 +67,5 @@ available_controls:
 
 references:
   provenance: knowledge-base/PROVENANCE.md
-  licenses: licenses/README.md
+  license: LICENSE
   audit_command: make audit-distribution

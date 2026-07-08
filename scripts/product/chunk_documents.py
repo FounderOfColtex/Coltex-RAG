@@ -28,7 +28,7 @@ def main() -> None:
                 max_chars=int(chunk_cfg["max_chunk_chars"]),
                 overlap=int(chunk_cfg["overlap_chars"]),
                 split_on=str(chunk_cfg.get("split_on", "## ")),
-                license_name=cfg.get("license", "Coltex-EULA"),
+                license_name=cfg.get("license", "MIT"),
             )
         )
 

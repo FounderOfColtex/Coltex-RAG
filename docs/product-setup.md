@@ -1,6 +1,6 @@
 # Coltex — Setup Guide
 
-Build, expand, and query the Coltex Enterprise RAG Vector Dataset.
+Build, expand, and query the Coltex knowledge base.
 
 ## Install
 
@@ -12,71 +12,31 @@ pip install -r requirements.txt
 ## Bootstrap the corpus
 
 ```bash
-make corpus-advanced              # Architecture bootstrap (500 docs)
-make corpus-mega                  # Expand to 10,000+ domain documents
-make expand-curated-kb COUNT=500  # Additional curated growth
-make corpus-report                # Rebuild catalog index
+make corpus-advanced
+make corpus-mega
+make expand-curated-kb COUNT=500
+make corpus-report
 ```
 
-## Build commercial vector dataset
+## Build knowledge base
 
 ```bash
-# Personal tier ($79 — non-commercial)
-make product-personal
-
-# Professional tier ($399 — commercial, one entity)
-make product-professional
-
-# Enterprise tier (commercial dataset packages)
-make product-enterprise
-
-# Fast build without embeddings (validation)
-make product-enterprise-fast
-
-# Premium smoke tier (25,000 streamed documents)
-make product-premium-smoke
-
-# Inspect deliverables
-python3 examples/load_dataset.py
-make audit-distribution
-make evaluate
-```
-
-## Index and query
-
-```bash
+make product
 make index
-python3 -m brain retrieve "How does GraphRAG work?" --context
-python3 -m brain report
+make audit-distribution
+python3 examples/load_dataset.py
 ```
 
-## Output artifacts
+## Use the CLI
 
-| Artifact | Path |
-|----------|------|
-| Chunks | `data/product/chunks/chunks.jsonl` |
-| Catalog | `data/product/catalog.jsonl` |
-| Embeddings | `data/product/embeddings/embeddings.jsonl` |
-| Graph | `data/product/graph/edges.jsonl` |
-| Manifest | `data/product/manifest.json` |
-| Benchmarks | `benchmarks/` |
-| Catalog index | `data/brain/catalog-index.json` |
+```bash
+python3 -m runtime status
+python3 -m runtime upload path/to/document.pdf
+python3 -m runtime ask "your question"
+python3 -m runtime search "query"
+python3 -m runtime dashboard
+```
 
-## Commercial documentation
+## License
 
-- [Product overview](commercial/product-overview.md)
-- [Technical datasheet](commercial/datasheet.md)
-- [SKU matrix](commercial/sku-matrix.md)
-- [Product licensing](product-licensing.md)
-
-## Corpus generation tiers
-
-| Command | Approximate output |
-|---------|-------------------|
-| `make corpus-advanced` | 500+ domain-organized docs |
-| `make corpus-mega` | 10,000+ documents |
-| `make product-enterprise` | Full vector dataset package |
-| `make product-premium-smoke` | 25,000 streamed documents |
-| `make product-hyper` | Uncapped hyper tier (cluster) |
-
-See [README](../README.md) and [architecture guide](architecture/knowledge-architecture.md).
+MIT — see [LICENSE](../LICENSE).

@@ -1,8 +1,11 @@
 .PHONY: install clean index retrieve stats report \
         corpus corpus-advanced corpus-grow corpus-mega corpus-report \
-        product product-personal product-professional product-enterprise product-premium product-premium-smoke product-hyper \
+        product product-hyper product-hyper-smoke \
         chunks deduplicate validate-product export-graph embeddings benchmarks \
-        manifest evaluate audit-distribution
+        manifest evaluate audit-distribution \
+        runtime-status runtime-dashboard runtime-health runtime-curator \
+        runtime-events runtime-knowledge runtime-ask runtime-upload \
+        runtime-monitor runtime-explain runtime-connector runtime-sources runtime-settings
 
 install:
 	pip install -r requirements.txt
@@ -38,6 +41,9 @@ corpus-links:
 runtime-status:
 	python3 -m runtime status
 
+runtime-dashboard:
+	python3 -m runtime dashboard
+
 runtime-health:
 	python3 -m runtime health
 
@@ -47,17 +53,20 @@ runtime-curator:
 runtime-events:
 	python3 -m runtime events --simulate
 
-runtime-dna:
-	python3 -m runtime dna --limit 3
-
-runtime-studio:
-	python3 -m runtime studio
+runtime-knowledge:
+	python3 -m runtime knowledge --limit 5
 
 runtime-ask:
 	python3 -m runtime ask "What knowledge is in my workspace?"
 
 runtime-upload:
 	python3 -m runtime upload README.md
+
+runtime-sources:
+	python3 -m runtime sources
+
+runtime-settings:
+	python3 -m runtime settings
 
 runtime-monitor:
 	python3 -m runtime monitor
@@ -106,29 +115,11 @@ expand-curated-kb:
 product:
 	python3 scripts/product/build_product.py
 
-product-personal:
-	python3 scripts/product/build_enterprise_product.py --config config/product_personal.yaml --skip-embeddings
-
-product-professional:
-	python3 scripts/product/build_enterprise_product.py --config config/product_professional.yaml --skip-embeddings
-
-product-enterprise:
-	python3 scripts/product/build_enterprise_product.py --config config/product_enterprise.yaml
-
-product-enterprise-fast:
-	python3 scripts/product/build_enterprise_product.py --config config/product_enterprise.yaml --skip-embeddings
-
-product-premium-smoke:
+product-hyper-smoke:
 	python3 scripts/product/build_premium_product.py --config config/product_hyper_smoke.yaml --skip-embeddings
 
-product-premium:
-	python3 scripts/product/build_premium_product.py --config config/product_hyper.yaml
-
 product-hyper:
-	python3 scripts/product/build_premium_product.py --config config/product_hyper.yaml --max-files 0
-
-stream-premium:
-	python3 scripts/product/stream_premium_corpus.py --config config/product_hyper.yaml
+	python3 scripts/product/build_premium_product.py --config config/product_hyper.yaml
 
 chunks:
 	python3 scripts/product/chunk_documents.py

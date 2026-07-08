@@ -1,13 +1,10 @@
-# Coltex Product — quality-first knowledge package configuration
-# Value over volume: curated content, accurate metadata, minimal duplication
+# Coltex Product — knowledge package configuration
 
 name: Coltex Product
 version: 1.0.0
-license: Coltex-EULA
-eula: licenses/eula.md
-updated: 2026-07-06
+license: MIT
+updated: 2026-07-08
 
-# Curated sources only (exclude synthetic generated corpus for product builds)
 knowledge_base:
   paths:
     - knowledge-base
@@ -17,15 +14,12 @@ knowledge_base:
     - "**/_seed/**"
     - "**/_excluded_from_distribution/**"
 
-# Commercial distribution compliance
 distribution:
-  require_eula: true
+  require_license: true
   require_provenance: true
   require_notice: true
-  # Reject placeholder stubs if they appear in distributable paths
   forbidden_body_markers:
     - "This document provides detailed information on"
-  # Warn on thin content below this threshold (chars, excluding frontmatter)
   min_substantive_chars: 45
   forbidden_source_patterns:
     - "wikipedia.org"
@@ -36,20 +30,18 @@ distribution:
     - "python.langchain.com"
     - "all rights reserved"
 
-# Quality gates — builds fail if thresholds not met
 quality:
   min_chunk_chars: 40
-  max_duplicate_ratio: 0.05      # max 5% duplicate chunks
+  max_duplicate_ratio: 0.05
   require_metadata_fields:
     - doc_id
     - title
-  require_license_header: true
   curated_only: true
 
 chunking:
   max_chunk_chars: 2000
   overlap_chars: 200
-  split_on: "## "                  # markdown H2 sections
+  split_on: "## "
 
 embeddings:
   model: sentence-transformers/all-MiniLM-L6-v2
@@ -71,5 +63,5 @@ benchmarks:
 
 evaluation:
   top_k: 8
-  min_retrieval_recall: 0.50     # target for seed benchmark
+  min_retrieval_recall: 0.50
   min_metadata_accuracy: 0.90

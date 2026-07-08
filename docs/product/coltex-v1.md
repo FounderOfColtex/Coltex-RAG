@@ -4,29 +4,40 @@
 
 **Goal:** Turn scattered business knowledge into AI-ready intelligence in under 10 minutes.
 
+Coltex V1 is a **local CLI tool**. No website. No cloud service.
+
 ---
 
-## Knowledge Studio — Home
+## CLI Commands
 
-The product opens here. Users open this every day.
+| Command | Purpose |
+|---------|---------|
+| `status` | Runtime and engine status |
+| `dashboard` | Documents, sources, searches, AI queries, last sync, health |
+| `knowledge` | Browse knowledge objects |
+| `sources` | List uploaded sources |
+| `upload <path>` | Upload and process a file |
+| `search "<query>"` | Universal search |
+| `ask "<question>"` | Ask Knowledge — sources, confidence, why |
+| `health` | Knowledge Health metrics |
+| `settings` | Workspace, embedding model, chunk size |
+| `curator` | Proactive knowledge alerts |
+| `monitor` | Runtime metrics |
+| `explain "<query>"` | Retrieval explainability |
 
-| Module | Purpose |
-|--------|---------|
-| **Dashboard** | Documents, sources, searches, AI queries, last sync, health |
-| **Knowledge** | Browse all knowledge objects |
-| **Sources** | Upload and manage knowledge sources |
-| **Search** | Universal search — one bar, all content |
-| **Ask Knowledge** | Question → answer with sources, confidence, and why |
-| **Analytics** | Knowledge Health and usage |
-| **Settings** | Workspace, AI provider, embeddings, chunk size, users, backup |
-
-Launch: `python3 -m runtime studio`
+```bash
+python3 -m runtime status
+python3 -m runtime upload path/to/document.pdf
+python3 -m runtime ask "What is our refund policy?"
+python3 -m runtime search "authentication"
+python3 -m runtime dashboard
+```
 
 ---
 
 ## Knowledge Sources
 
-### Supported today (V1)
+### Supported (V1)
 
 | Format | Extension |
 |--------|-----------|
@@ -37,39 +48,38 @@ Launch: `python3 -m runtime studio`
 | HTML | `.html` |
 | JSON | `.json` |
 
-Upload via Knowledge Studio → **Sources**, or:
-
 ```bash
 python3 -m runtime upload path/to/document.pdf
+python3 -m runtime sources
 ```
 
-### Coming soon
+### Planned connectors
 
-GitHub · Notion · Google Drive · Confluence · Slack
+GitHub · Notion · Google Drive
+
+```bash
+python3 -m runtime connector filesystem
+```
 
 ---
 
 ## AI Processing (automatic)
 
-Users never see technical steps unless they expand **Processing Details**.
-
 ```
 Upload → Parse → Clean → Chunk → Metadata → Embeddings → Index → Done
 ```
 
-Triggered automatically on every upload. Typical time: under 10 minutes for hundreds of documents.
+Triggered on every upload. Technical steps stay hidden unless you inspect pipeline output.
 
 ---
 
 ## Universal Search
 
-One search bar searches:
+One command searches documents, metadata, code references, APIs, and SQL patterns:
 
-- Documents
-- Metadata (type, hub, tags)
-- Code references
-- API documentation
-- SQL examples
+```bash
+python3 -m runtime search "JWT authentication"
+```
 
 ---
 
@@ -81,64 +91,43 @@ Not "Ask AI" — **Ask Knowledge**.
 Question → Retrieve → Build Context → Answer → Sources + Confidence + Why
 ```
 
-Each answer shows:
-
-- **Sources** — linked documents
-- **Confidence** — retrieval score
-- **Why** — similarity, graph, metadata match (explainability)
-
-CLI: `python3 -m runtime ask "How do we handle authentication?"`
+```bash
+python3 -m runtime ask "How do we handle password resets?"
+```
 
 ---
 
 ## Knowledge Health
 
-Simple, honest scores — nothing fake.
+```bash
+python3 -m runtime health
+python3 -m runtime dashboard
+```
 
-| Metric | Example |
-|--------|---------|
-| Knowledge Score | 94% |
-| Documents | 483 |
-| Embeddings | 14,832 |
-| Duplicates | 2 |
-| Outdated | 6 |
+Shows honest metrics: knowledge score, document count, embeddings, duplicates, outdated content.
+
+---
+
+## Settings
+
+```bash
+python3 -m runtime settings
+```
+
+Workspace name, AI provider, embedding model, chunk size — stored locally in `data/runtime/settings.json`.
 
 ---
 
 ## V1 Architecture
 
 ```
-Knowledge Sources
-       ↓
-   Processing
-       ↓
-  Knowledge Store
-       ↓
-     Search
-       ↓
-  Ask Knowledge
-       ↓
-   Analytics
+Knowledge Sources → Processing → Knowledge Store → Search → Ask Knowledge → Analytics
 ```
 
-Runtime implementation: `runtime/processing/`, `runtime/sources/`, `runtime/ask/`
-
-Config: [config/v1.yaml](../../config/v1.yaml)
+Config: `config/v1.yaml`
 
 ---
 
-## Quick start (under 10 minutes)
+## License
 
-```bash
-pip install -r requirements.txt
-python3 -m runtime studio
-
-# Upload a document
-python3 -m runtime upload docs/example.md
-
-# Ask Knowledge
-python3 -m runtime ask "What is in my knowledge base?"
-
-# Check health
-python3 -m runtime health
-```
+MIT — see [LICENSE](../../LICENSE).

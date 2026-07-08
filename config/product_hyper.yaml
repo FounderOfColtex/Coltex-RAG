@@ -1,14 +1,9 @@
-# Coltex Premium RAG Dataset — $1000+ tier
-# 100,000,000,000× hyper-scale distributable corpus
-# Original synthetic content · Coltex EULA · compliance-audited
+# Coltex hyper-scale knowledge base build
 
-name: Coltex Premium RAG Dataset
+name: Coltex Hyper Knowledge Base
 version: 2.1.0
-tier: premium
-price_usd: 1000
-license: Coltex-EULA
-eula: licenses/eula.md
-updated: 2026-07-07
+license: MIT
+updated: 2026-07-08
 
 # Hyper-scale generation (procedural streaming — no memory blowup)
 generation:
@@ -83,7 +78,7 @@ knowledge_base:
     - "**/_excluded_from_distribution/**"
 
 distribution:
-  require_eula: true
+  require_license: true
   require_provenance: true
   require_notice: true
   forbidden_body_markers:
@@ -104,7 +99,6 @@ quality:
   require_metadata_fields:
     - doc_id
     - title
-  require_license_header: true
   curated_only: false
   streaming_mode: true
 

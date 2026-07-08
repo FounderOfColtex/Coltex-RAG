@@ -1,8 +1,10 @@
 Coltex
 Copyright 2026 Elijah Maxwell / Coltex
 
-Third-party open-source dependencies used by the RAG database engine
-(each subject to its own upstream license — see project repositories):
+Licensed under the MIT License. See LICENSE.
+
+Third-party open-source dependencies used by the retrieval engine
+(each subject to its own upstream license):
 
 - sentence-transformers (https://github.com/UKPLab/sentence-transformers)
 - ChromaDB (https://github.com/chroma-core/chroma)
@@ -10,10 +12,5 @@ Third-party open-source dependencies used by the RAG database engine
 - tqdm (https://github.com/tqdm/tqdm)
 - Embedding model: sentence-transformers/all-MiniLM-L6-v2
 
-================================================================================
-Coltex knowledge base content
-================================================================================
-Original synthetic documentation under knowledge-base/ (excluding
-_excluded_from_distribution/ and generated/) is licensed under the
-Coltex End User License Agreement (EULA). See EULA.md and knowledge-base/EULA.md.
-See knowledge-base/PROVENANCE.md for content origin.
+Knowledge base content under knowledge-base/ is original synthetic
+documentation unless noted otherwise. See knowledge-base/PROVENANCE.md.

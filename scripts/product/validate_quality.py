@@ -68,41 +68,10 @@ def validate_documents(cfg: dict, kb) -> dict:
 def validate_license_files(cfg: dict) -> dict:
     dist_cfg = cfg.get("distribution", {})
     issues: list[str] = []
-    licenses_dir = ROOT / "licenses"
 
-    require_eula = dist_cfg.get("require_eula", dist_cfg.get("require_kb_license", False))
-    require_personal = dist_cfg.get("require_personal_license", False)
-    require_professional = dist_cfg.get("require_professional_license", False)
-    require_enterprise = dist_cfg.get("require_enterprise_license", False)
-    if require_eula:
-        if not (licenses_dir / "eula.md").exists():
-            issues.append("Missing licenses/eula.md")
-        if not (licenses_dir / "README.md").exists():
-            issues.append("Missing licenses/README.md")
-    if require_personal:
-        if not (licenses_dir / "personal.md").exists():
-            issues.append("Missing licenses/personal.md")
-        if not (licenses_dir / "README.md").exists():
-            issues.append("Missing licenses/README.md")
-    if require_professional:
-        if not (licenses_dir / "professional.md").exists():
-            issues.append("Missing licenses/professional.md")
-        if not (licenses_dir / "README.md").exists():
-            issues.append("Missing licenses/README.md")
-    if require_enterprise:
-        if not (licenses_dir / "enterprise.md").exists():
-            issues.append("Missing licenses/enterprise.md")
-        if not (licenses_dir / "README.md").exists():
-            issues.append("Missing licenses/README.md")
-    if not require_eula and not require_personal and not require_professional and not require_enterprise:
-        if not (licenses_dir / "personal.md").exists():
-            issues.append("Missing licenses/personal.md")
-        if not (licenses_dir / "professional.md").exists():
-            issues.append("Missing licenses/professional.md")
-        if not (licenses_dir / "eula.md").exists():
-            issues.append("Missing licenses/eula.md")
-        if not (licenses_dir / "README.md").exists():
-            issues.append("Missing licenses/README.md")
+    if dist_cfg.get("require_license", True):
+        if not (ROOT / "LICENSE").exists():
+            issues.append("Missing LICENSE (MIT)")
     if dist_cfg.get("require_provenance", True):
         if not (ROOT / "knowledge-base" / "PROVENANCE.md").exists() and not (ROOT / "knowledge-base" / "PROVENANCE").exists():
             issues.append("Missing knowledge-base/PROVENANCE.md")

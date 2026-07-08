@@ -55,7 +55,7 @@ class CuratorEngine:
                 "severity": "high",
                 "title": "Duplicate documents detected",
                 "message": f"{total} documents across {len(dup_groups)} duplicate groups should be merged.",
-                "action": "Review merge candidates in Knowledge Studio → Curator",
+                "action": "Review merge candidates: python3 -m runtime curator",
                 "groups": len(dup_groups),
             })
 
@@ -107,7 +107,7 @@ class CuratorEngine:
                 "severity": "medium",
                 "title": "Disconnected graph nodes",
                 "message": f"{disconnected} documents have no graph relationships — connect them to improve retrieval.",
-                "action": "Add see_also / depends_on links in Knowledge Studio → Graph",
+                "action": "Add see_also / depends_on links: python3 -m runtime knowledge",
                 "count": disconnected,
             })
 

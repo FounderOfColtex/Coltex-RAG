@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit commercial distribution rights compliance for the Coltex Product."""
+"""Audit distribution compliance for the Coltex knowledge base."""
 
 from __future__ import annotations
 
@@ -23,28 +23,8 @@ def check_required_files(dist_cfg: dict) -> dict:
     issues: list[str] = []
     required: list[tuple[str, Path]] = []
 
-    require_eula = dist_cfg.get("require_eula", dist_cfg.get("require_kb_license", False))
-    require_personal = dist_cfg.get("require_personal_license", False)
-    require_professional = dist_cfg.get("require_professional_license", False)
-    require_enterprise = dist_cfg.get("require_enterprise_license", False)
-    licenses_dir = ROOT / "licenses"
-    if require_eula:
-        required.append(("licenses/eula.md", licenses_dir / "eula.md"))
-        required.append(("licenses/README.md", licenses_dir / "README.md"))
-    if require_personal:
-        required.append(("licenses/personal.md", licenses_dir / "personal.md"))
-        required.append(("licenses/README.md", licenses_dir / "README.md"))
-    if require_professional:
-        required.append(("licenses/professional.md", licenses_dir / "professional.md"))
-        required.append(("licenses/README.md", licenses_dir / "README.md"))
-    if require_enterprise:
-        required.append(("licenses/enterprise.md", licenses_dir / "enterprise.md"))
-        required.append(("licenses/README.md", licenses_dir / "README.md"))
-    if not require_eula and not require_personal and not require_professional and not require_enterprise:
-        required.append(("licenses/personal.md", licenses_dir / "personal.md"))
-        required.append(("licenses/professional.md", licenses_dir / "professional.md"))
-        required.append(("licenses/eula.md", licenses_dir / "eula.md"))
-        required.append(("licenses/README.md", licenses_dir / "README.md"))
+    if dist_cfg.get("require_license", True):
+        required.append(("LICENSE", ROOT / "LICENSE"))
     if dist_cfg.get("require_provenance", True):
         required.append(("knowledge-base/PROVENANCE.md", ROOT / "knowledge-base" / "PROVENANCE.md"))
     if dist_cfg.get("require_notice", True):
@@ -175,10 +155,9 @@ def main() -> None:
             "distributable_documents": doc_count,
             "estimated_total_documents": gen_stats.get("estimated_total_documents"),
             "mega_multiplier": gen_stats.get("mega_multiplier"),
-            "license": cfg.get("license", "Coltex-EULA"),
+            "license": cfg.get("license", "MIT"),
             "content_origin": gen_stats.get("content_origin", "original_synthetic"),
             "third_party_docs_copied": gen_stats.get("third_party_docs_copied", False),
-            "price_tier_usd": cfg.get("price_usd"),
         },
     }
 

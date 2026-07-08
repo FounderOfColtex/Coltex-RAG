@@ -1,4 +1,4 @@
-# Coltex V1 — Product Configuration
+# Coltex V1 — CLI Product Configuration
 
 version: "1.0.0"
 tagline: "The AI Knowledge Platform for Modern Organizations"
@@ -7,17 +7,22 @@ goal: "Turn scattered business knowledge into AI-ready intelligence in under 10 
 product:
   name: Coltex
   edition: V1
-  home: Knowledge Studio
+  interface: cli
 
-studio:
-  modules:
+cli:
+  commands:
+    - status
     - dashboard
     - knowledge
     - sources
+    - upload
     - search
     - ask
-    - analytics
+    - health
     - settings
+    - curator
+    - monitor
+    - explain
 
 sources:
   supported_now:
@@ -28,7 +33,7 @@ sources:
     - txt
     - html
     - json
-  coming_soon:
+  planned_connectors:
     - github
     - notion
     - google_drive
@@ -47,7 +52,6 @@ processing:
     - done
   chunk_size: 2000
   chunk_overlap: 200
-  hidden_from_user: true
 
 search:
   modes: [documents, metadata, code, api, sql]
@@ -72,5 +76,6 @@ settings:
     ai_provider: local
     embedding_model: sentence-transformers/all-MiniLM-L6-v2
     chunk_size: 2000
-    users: 1
     backup_enabled: false
+
+license: MIT

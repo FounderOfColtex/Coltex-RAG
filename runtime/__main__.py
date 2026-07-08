@@ -19,6 +19,10 @@ def cmd_health(args: argparse.Namespace) -> None:
     print(json.dumps(_rt(args.config).analytics.health(), indent=2))
 
 
+def cmd_dashboard(args: argparse.Namespace) -> None:
+    print(json.dumps(_rt(args.config).v1.snapshot(), indent=2))
+
+
 def cmd_curator(args: argparse.Namespace) -> None:
     rt = _rt(args.config)
     result = rt.curator.proactive_scan(save=not args.no_save)
@@ -33,12 +37,6 @@ def cmd_explain(args: argparse.Namespace) -> None:
     rt = _rt(args.config)
     rt.brain.index(force=False)
     print(json.dumps(rt.explain.explain(args.query), indent=2))
-
-
-def cmd_studio(args: argparse.Namespace) -> None:
-    from runtime.studio.server import serve
-    rt = _rt(args.config)
-    serve(rt, host=args.host, port=args.port)
 
 
 def cmd_ingest(args: argparse.Namespace) -> None:
@@ -59,6 +57,29 @@ def cmd_upload(args: argparse.Namespace) -> None:
     print(json.dumps(_rt(args.config).upload_and_process(args.path), indent=2))
 
 
+def cmd_sources(args: argparse.Namespace) -> None:
+    rt = _rt(args.config)
+    print(json.dumps({
+        "sources": rt.sources.list_sources(),
+        "count": rt.sources.count(),
+        "supported": [".pdf", ".docx", ".md", ".txt", ".html", ".json"],
+    }, indent=2))
+
+
+def cmd_settings(args: argparse.Namespace) -> None:
+    rt = _rt(args.config)
+    if args.set:
+        key, _, value = args.set.partition("=")
+        if not key:
+            print(json.dumps({"error": "use --set key=value"}, indent=2))
+            return
+        current = rt.settings.load()
+        current[key.strip()] = value.strip()
+        print(json.dumps(rt.settings.save(current), indent=2))
+    else:
+        print(json.dumps(rt.settings.load(), indent=2))
+
+
 def cmd_events(args: argparse.Namespace) -> None:
     rt = _rt(args.config)
     if args.simulate:
@@ -66,44 +87,39 @@ def cmd_events(args: argparse.Namespace) -> None:
     print(json.dumps({"events": rt.event_bus.recent, "stats": rt.event_bus.stats()}, indent=2))
 
 
-def cmd_dna(args: argparse.Namespace) -> None:
+def cmd_knowledge(args: argparse.Namespace) -> None:
     rt = _rt(args.config)
     if args.document_id:
         print(json.dumps(rt.knowledge_dna(args.document_id), indent=2))
     else:
-        print(json.dumps(rt.knowledge_objects(limit=args.limit), indent=2))
+        print(json.dumps(rt.studio.explorer(limit=args.limit), indent=2))
 
 
 def cmd_connector(args: argparse.Namespace) -> None:
     print(json.dumps(_rt(args.config).sync_connector(args.connector_id), indent=2))
 
 
-def cmd_explorer(args: argparse.Namespace) -> None:
-    print(json.dumps(_rt(args.config).studio.explorer(limit=args.limit), indent=2))
-
-
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Coltex Runtime — Knowledge Operating System")
+    parser = argparse.ArgumentParser(
+        prog="coltex",
+        description="Coltex V1 — local CLI for AI-ready knowledge",
+    )
     parser.add_argument("--config", default="config/runtime.yaml")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("status", help="Runtime and engine status").set_defaults(func=cmd_status)
+    sub.add_parser("dashboard", help="Dashboard metrics").set_defaults(func=cmd_dashboard)
     sub.add_parser("health", help="Knowledge Health scores").set_defaults(func=cmd_health)
 
-    p_curator = sub.add_parser("curator", help="AI Curator proactive alerts")
+    p_curator = sub.add_parser("curator", help="Proactive knowledge alerts")
     p_curator.add_argument("--no-save", action="store_true")
     p_curator.set_defaults(func=cmd_curator)
 
-    sub.add_parser("monitor", help="Runtime monitoring dashboard data").set_defaults(func=cmd_monitor)
+    sub.add_parser("monitor", help="Runtime monitoring data").set_defaults(func=cmd_monitor)
 
     p_explain = sub.add_parser("explain", help="Why did Coltex retrieve this?")
     p_explain.add_argument("query")
     p_explain.set_defaults(func=cmd_explain)
-
-    p_studio = sub.add_parser("studio", help="Launch Knowledge Studio web UI")
-    p_studio.add_argument("--host", default="127.0.0.1")
-    p_studio.add_argument("--port", type=int, default=8787)
-    p_studio.set_defaults(func=cmd_studio)
 
     p_ingest = sub.add_parser("ingest", help="Event-driven ingest pipeline")
     p_ingest.add_argument("document_id")
@@ -122,23 +138,25 @@ def main(argv: list[str] | None = None) -> None:
     p_upload.add_argument("path")
     p_upload.set_defaults(func=cmd_upload)
 
+    sub.add_parser("sources", help="List uploaded sources").set_defaults(func=cmd_sources)
+
+    p_settings = sub.add_parser("settings", help="View or update workspace settings")
+    p_settings.add_argument("--set", default="", help="Set a value, e.g. chunk_size=1500")
+    p_settings.set_defaults(func=cmd_settings)
+
     p_events = sub.add_parser("events", help="Recent event bus activity")
     p_events.add_argument("--simulate", action="store_true")
     p_events.add_argument("--document-id", default="")
     p_events.set_defaults(func=cmd_events)
 
-    p_dna = sub.add_parser("dna", help="Knowledge DNA")
-    p_dna.add_argument("--document-id", default="")
-    p_dna.add_argument("--limit", type=int, default=5)
-    p_dna.set_defaults(func=cmd_dna)
+    p_knowledge = sub.add_parser("knowledge", help="Browse knowledge objects")
+    p_knowledge.add_argument("--document-id", default="")
+    p_knowledge.add_argument("--limit", type=int, default=20)
+    p_knowledge.set_defaults(func=cmd_knowledge)
 
     p_conn = sub.add_parser("connector", help="Sync a connector")
     p_conn.add_argument("connector_id", choices=["filesystem", "github"])
     p_conn.set_defaults(func=cmd_connector)
-
-    p_exp = sub.add_parser("explorer", help="Knowledge Studio explorer")
-    p_exp.add_argument("--limit", type=int, default=20)
-    p_exp.set_defaults(func=cmd_explorer)
 
     args = parser.parse_args(argv)
     args.func(args)

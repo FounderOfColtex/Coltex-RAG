@@ -1,13 +1,13 @@
 # Coltex Distributable Dataset Package
 
-This directory contains audit samples and documentation for the commercial Coltex RAG vector dataset.
+Audit samples and documentation for the Coltex knowledge base build.
 
 ## Contents
 
 | Path | Description |
 |------|-------------|
-| `_samples/` | Audit sample markdown (first N from premium stream) |
-| `DATASET.md` | This file — buyer orientation |
+| `_samples/` | Audit sample markdown (first N from hyper stream) |
+| `DATASET.md` | This file |
 | `README.md` | Generation commands |
 
 ## Quick load (Python)
@@ -15,15 +15,12 @@ This directory contains audit samples and documentation for the commercial Colte
 ```python
 import json
 
-# Load vector-ready chunks
 with open("data/product/chunks/chunks.jsonl") as f:
     chunks = [json.loads(line) for line in f]
 
-# Load pre-computed embeddings
 with open("data/product/embeddings/embeddings.jsonl") as f:
     vectors = [json.loads(line) for line in f]
 
-# Load graph edges
 with open("data/product/graph/edges.jsonl") as f:
     edges = [json.loads(line) for line in f]
 
@@ -34,19 +31,13 @@ print(f"{len(chunks)} chunks, {len(vectors)} vectors, {len(edges)} edges")
 
 ```bash
 pip install -r requirements.txt
-make product-enterprise       # Curated enterprise tier
-make product-premium-smoke    # Premium 25k validation build
-make audit-distribution     # Compliance check
+make product
+make product-hyper-smoke
+make audit-distribution
 ```
 
 ## Compliance
 
-- **License:** See [licenses/README.md](../../licenses/README.md)
+- **License:** MIT — see [LICENSE](../../LICENSE)
 - **Provenance:** `knowledge-base/PROVENANCE.md`
 - **Audit:** `benchmarks/distribution_audit.json` (after build)
-
-## Documentation
-
-- [Product overview](../../docs/commercial/product-overview.md)
-- [Technical datasheet](../../docs/commercial/datasheet.md)
-- [SKU matrix](../../docs/commercial/sku-matrix.md)
