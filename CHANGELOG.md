@@ -2,6 +2,20 @@
 
 All notable changes to the Coltex product package are documented here.
 
+## [5.0.0] - 2026-07-09
+
+### Changed — Coltex Mega RAG (100,000,000+ sellable files)
+
+- **Repositioned as commercial Mega RAG** — largest advanced RAG corpus product, not a self-hosted-only knowledge app
+- **100M+ commercial floor** — `mega_plus` tier in `scripts/mega_scale.py`; target `100,000,000` documents
+- **Primary configs** — `config/product_mega.yaml`, `config/product_mega_smoke.yaml`
+- **Build targets** — `make product-mega`, `make product-mega-smoke`, `make marketplace-packs`
+- **Sellable marketplace** — active packs (RAG core, languages, cloud, security, architecture) in `config/marketplace.yaml`
+- **Commercial licensing restored** — `EULA.md`, Personal / Professional / Enterprise / Mega licenses
+- **Buyer docs** — `docs/commercial/product-overview.md`, `sku-matrix.md`, `datasheet.md`
+- **Pipeline** — marketplace pack catalog builder; EULA checks in validate/audit; manifest SKU metadata
+- Engine source remains MIT; commercial Dataset SKUs under EULA
+
 ## [4.12.0] - 2026-07-08
 
 ### Removed — Localhost-only deployment

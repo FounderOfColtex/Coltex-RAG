@@ -1,9 +1,42 @@
-# Coltex Marketplace — extensibility ecosystem (roadmap)
+# Coltex Mega RAG Marketplace — sellable knowledge packs
 
-version: 1.0.0
-updated: 2026-07-07
+version: 5.0.0
+updated: 2026-07-09
+status: active
+product: Coltex Mega RAG
+scale_target: 100000000
 
-status: planned
+# Packs that can be sold individually or bundled into SKUs
+packs:
+  - id: pack-rag-core
+    label: RAG Core Pack
+    price_usd: 299
+    categories: [rag, graphrag, agentic, chunking, embeddings, vector_stores, vector_search, retrieval, indexing, fine_tuning, prompt_engineering, tool_use, memory]
+    description: Foundation RAG / GraphRAG / agentic retrieval knowledge
+
+  - id: pack-languages
+    label: Languages Pack
+    price_usd: 249
+    categories: [python, java, javascript, typescript, go, rust, sql, csharp]
+    description: Language-specific engineering knowledge for code RAG
+
+  - id: pack-cloud-devops
+    label: Cloud & DevOps Pack
+    price_usd: 349
+    categories: [docker, kubernetes, aws, azure, gcp, terraform, ci_cd, linux, git, github_actions, nginx, bash]
+    description: Cloud platforms, containers, and delivery pipelines
+
+  - id: pack-security-sre
+    label: Security & SRE Pack
+    price_usd: 349
+    categories: [security, observability, testing, performance, code_review, incidents, data_quality, mlops]
+    description: Security, reliability, and operational excellence
+
+  - id: pack-architecture
+    label: Architecture Pack
+    price_usd: 299
+    categories: [microservices, event_driven, architecture, api_design, domain_driven_design, postgresql, mongodb, redis, mysql]
+    description: System design, APIs, and data architecture
 
 categories:
   - id: connectors
@@ -30,11 +63,32 @@ categories:
     label: Industry Packs
     examples: [fintech_compliance, healthcare_hipaa, cloud_platform]
 
+  - id: mega_shards
+    label: Mega Shards
+    examples: [pack-rag-core, pack-languages, pack-cloud-devops, pack-security-sre, pack-architecture]
+
 publishing:
   review_required: true
   license_required: true
   provenance_required: true
+  eula_required: true
+  min_documents_per_pack: 100000
+
+sku_bundles:
+  personal:
+    packs: [pack-rag-core]
+    max_documents: 25000
+  professional:
+    packs: [pack-rag-core, pack-languages]
+    max_documents: 10000000
+  enterprise:
+    packs: [pack-rag-core, pack-languages, pack-cloud-devops, pack-security-sre, pack-architecture]
+    max_documents: 50000000
+  mega:
+    packs: [pack-rag-core, pack-languages, pack-cloud-devops, pack-security-sre, pack-architecture]
+    max_documents: 0   # uncapped — 100M+
 
 runtime_integration:
   plugin_manager: runtime.plugins.manager.PluginManager
   registry_path: data/runtime/marketplace/registry.json
+  packs_path: data/product/marketplace/packs.json

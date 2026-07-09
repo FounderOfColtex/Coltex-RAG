@@ -1,22 +1,24 @@
-# Legacy alias — prefer config/product_mega_smoke.yaml
+# Coltex Mega RAG — commercial 100,000,000+ document build
+# Primary sellable SKU configuration
 
-name: Coltex Mega RAG (Smoke Alias)
-version: 5.0.0-smoke
-tier: mega_smoke
-sku: MEGA-SMOKE
+name: Coltex Mega RAG
+version: 5.0.0
+tier: mega
+sku: MEGA-100M
 license: EULA
 license_path: EULA.md
 commercial_license: MEGA-LICENSE.md
 updated: 2026-07-09
-tagline: Mega RAG smoke build — validates 100M+ pipeline at capped scale
+tagline: The largest commercial RAG corpus — 100,000,000+ sellable knowledge files
 
+# Mega-scale generation (procedural streaming — memory-safe)
 generation:
-  mega_multiplier: 100000000
+  mega_multiplier: 100000000       # mega_plus tier → 100M+ documents
   scale: 10000
   variations_per_doc: 24
-  max_files: 25000
-  target_documents: 100000000
-  sample_md_files: 1000
+  max_files: 0                     # 0 = uncapped (run on cluster / Vast.ai)
+  target_documents: 100000000      # commercial floor
+  sample_md_files: 10000           # audit samples written to disk
   sample_dir: knowledge-base/distributable/_samples
   streaming: true
   sellable: true
@@ -72,6 +74,7 @@ generation:
     - nginx
     - bash
 
+# Knowledge sources: seed CHUNK docs + streamed Mega corpus
 knowledge_base:
   paths:
     - knowledge-base
@@ -95,6 +98,10 @@ distribution:
   forbidden_source_patterns:
     - "wikipedia.org"
     - "stackoverflow.com"
+    - "docs.python.org"
+    - "kubernetes.io/docs"
+    - "huggingface.co/docs"
+    - "python.langchain.com"
     - "all rights reserved"
 
 quality:
@@ -114,8 +121,8 @@ chunking:
 embeddings:
   model: sentence-transformers/all-MiniLM-L6-v2
   output_dir: data/product/embeddings
-  batch_size: 64
-  max_chunks: 150000
+  batch_size: 128
+  max_chunks: 500000              # cap for local builds; remove on cluster
 
 output:
   base_dir: data/product
@@ -129,7 +136,7 @@ output:
 
 marketplace:
   enabled: true
-  min_pack_documents: 1000
+  min_pack_documents: 100000
   sellable_packs:
     - pack-rag-core
     - pack-languages
@@ -139,13 +146,13 @@ marketplace:
 
 benchmarks:
   output_dir: benchmarks
-  min_faq_pairs: 250
+  min_faq_pairs: 500
   include_rag_eval: true
   include_retrieval_gold: true
-  sample_from_catalog: 8000
+  sample_from_catalog: 15000
 
 evaluation:
   top_k: 8
-  min_retrieval_recall: 0.40
+  min_retrieval_recall: 0.45
   min_metadata_accuracy: 0.90
-  sample_size: 100
+  sample_size: 300

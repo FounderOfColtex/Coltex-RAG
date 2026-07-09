@@ -1,102 +1,124 @@
 # Coltex
 
-**A Self-Hosted AI Knowledge Platform**
+**The largest commercial RAG corpus — 100,000,000+ sellable knowledge files.**
 
-Turn scattered business knowledge into AI-ready intelligence — deploy on your own infrastructure with complete data ownership.
+Coltex Mega RAG is an advanced, GraphRAG-native knowledge product: a streaming-generated,
+embedding-ready corpus designed to power production retrieval systems and to be sold as
+domain packs, industry shards, and the full **Mega (100M+)** SKU.
 
-## Quick start (self-hosted)
+---
+
+## What you get
+
+| Deliverable | Description |
+|-------------|-------------|
+| **100M+ documents** | Commercial Mega floor — original synthetic knowledge files |
+| **Vector chunks** | Metadata-rich JSONL for any vector store |
+| **Knowledge graph** | Typed edges for GraphRAG routing |
+| **Marketplace packs** | Sellable domain packs (RAG, languages, cloud, security, architecture) |
+| **Benchmarks** | FAQ, retrieval gold, RAG eval sets |
+| **Audit trail** | Provenance, EULA, distribution compliance |
+
+Commercial packaging: [docs/commercial/product-overview.md](docs/commercial/product-overview.md) · [SKU matrix](docs/commercial/sku-matrix.md)
+
+---
+
+## Quick start
 
 ```bash
 git clone https://github.com/FounderOfColtex/Coltex-Knowledge-Platform.git
 cd Coltex-Knowledge-Platform
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate.bat
+source .venv/bin/activate
 pip install -e .
-coltex serve
+
+# Validate the Mega commercial pipeline (capped smoke build)
+make product-mega-smoke
+
+# Inspect artifacts
+python3 examples/load_dataset.py
+make audit-distribution
 ```
 
-Knowledge Studio is available to devices on your network at **http://\<your-server-ip\>:8080** (default `lan` profile).
-
-### Deployment profiles
-
-| Profile | Bind | Port | Use case |
-|---------|------|------|----------|
-| `lan` | 0.0.0.0 | 8080 | **Default** — LAN, home server, NAS, VPS |
-| `production` | 0.0.0.0 | 443 | Domain + HTTPS |
+Full Mega build (cluster / Vast.ai — uncapped 100M+):
 
 ```bash
-coltex serve --profile lan            # network access (default)
-coltex serve --profile production     # HTTPS on port 443
-coltex serve --host 0.0.0.0 --port 8080
-coltex deploy                         # show deployment config & access URLs
+make product-mega
 ```
 
-Configure in **`config/deployment.yaml`** — host, port, protocol, domain, SSL certificates, and networking.
+---
 
-Full guide: [docs/deployment/self-hosted.md](docs/deployment/self-hosted.md)
+## Commercial SKUs
+
+| SKU | Scale | Price |
+|-----|-------|-------|
+| Personal | ~25k sample | $79 |
+| Professional | 1M–10M domain packs | $999 |
+| Enterprise | 10M–50M multi-domain | Custom |
+| **Mega** | **100,000,000+** | Custom |
+
+Licenses: [EULA.md](EULA.md) · [MEGA-LICENSE.md](MEGA-LICENSE.md) · [PERSONAL-LICENSE.md](PERSONAL-LICENSE.md) · [PROFESSIONAL-LICENSE.md](PROFESSIONAL-LICENSE.md) · [ENTERPRISE-LICENSE.md](ENTERPRISE-LICENSE.md)
+
+Engine source remains **MIT** ([LICENSE](LICENSE)).
 
 ---
 
-## Access examples
+## Marketplace packs
 
-| Environment | URL |
-|-------------|-----|
-| Office LAN | `http://192.168.x.x:8080` |
-| Custom domain | `https://knowledge.company.com` |
-| Docker / VPS | `http://your-server-ip:8080` |
+Sell individually or bundle into SKUs — see [config/marketplace.yaml](config/marketplace.yaml):
 
----
-
-## Docker
+- `pack-rag-core` — RAG / GraphRAG / embeddings / retrieval
+- `pack-languages` — Python, JS/TS, Go, Rust, Java, C#, SQL
+- `pack-cloud-devops` — AWS, Azure, GCP, K8s, Terraform, CI/CD
+- `pack-security-sre` — Security, observability, incidents
+- `pack-architecture` — Microservices, DDD, APIs, data stores
 
 ```bash
-docker compose up -d
+make marketplace-packs
 ```
 
-See [docs/deployment/self-hosted.md](docs/deployment/self-hosted.md) for Docker, Windows Server, Linux, and TLS setup.
-
 ---
 
-## Knowledge Studio
-
-| Page | Purpose |
-|------|---------|
-| **Dashboard** | Documents, embeddings, health, build workspace |
-| **Workspace** | Create or open a `.ctex` workspace |
-| **Knowledge** | Browse knowledge objects |
-| **Sources** | Upload PDF, DOCX, MD, TXT, HTML, JSON |
-| **Search** | Universal search |
-| **Ask Knowledge** | Q&A with sources |
-| **Settings** | Embedding model, chunk size, etc. |
-
----
-
-## Workspace (.ctex)
-
-Coltex projects are `.ctex` workspace files — like `.uproject` or `.blend`. Create from Knowledge Studio or:
+## Self-hosted Knowledge Studio (included)
 
 ```bash
-coltex new MyWorkspace
-coltex build
+coltex serve                  # LAN default — http://<server-ip>:8080
+coltex deploy                 # show access URLs
 ```
+
+| Profile | Bind | Port |
+|---------|------|------|
+| `lan` | 0.0.0.0 | 8080 |
+| `production` | 0.0.0.0 | 443 |
+
+Docker: `docker compose up -d` — guide: [docs/deployment/self-hosted.md](docs/deployment/self-hosted.md)
 
 ---
 
-## Environment variables
+## Why Coltex Mega RAG is advanced
 
-| Variable | Purpose |
-|----------|---------|
-| `COLTEX_HOST` | Bind host (`0.0.0.0` for network) |
-| `COLTEX_PORT` | Bind port |
-| `COLTEX_PROTOCOL` | `http` or `https` |
-| `COLTEX_DOMAIN` | Public domain |
-| `COLTEX_PUBLIC_URL` | Full public URL override |
-| `COLTEX_SSL_CERT` | TLS certificate path |
-| `COLTEX_SSL_KEY` | TLS private key path |
-| `COLTEX_DEPLOYMENT_PROFILE` | `lan` or `production` |
+1. **Hyper-scale streaming** — never loads 100M files into memory
+2. **GraphRAG-native** — hubs + typed relationships on every document
+3. **Hybrid retrieval ready** — dense vectors + metadata filters
+4. **Quality gates** — substance checks, duplicate caps, commercial audit
+5. **Sellable by design** — SKUs, packs, catalog, and EULA from day one
+6. **Evaluation harness** — recall@k and metadata accuracy benchmarks
+
+---
+
+## Docs
+
+| Doc | Purpose |
+|-----|---------|
+| [Commercial overview](docs/commercial/product-overview.md) | Buyer-facing product |
+| [Datasheet](docs/commercial/datasheet.md) | Spec sheet |
+| [SKU matrix](docs/commercial/sku-matrix.md) | Pricing & packs |
+| [Platform overview](docs/platform/overview.md) | Runtime & intelligence |
+| [Product setup](docs/product-setup.md) | Build & query |
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+- **Engine / runtime:** MIT — [LICENSE](LICENSE)
+- **Commercial Mega RAG dataset:** [EULA.md](EULA.md)

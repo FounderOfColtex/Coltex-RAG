@@ -1,31 +1,45 @@
-# Coltex V1 — Self-Hosted Product
+# Coltex Mega RAG — Product Spec
 
-**Tagline:** A Self-Hosted AI Knowledge Platform
+**Tagline:** The largest commercial RAG corpus — 100,000,000+ sellable knowledge files.
 
-**Goal:** Turn scattered business knowledge into AI-ready intelligence in under 10 minutes — on infrastructure you control.
-
-Deploy on Windows Server, Linux, Docker, VPS, home servers, NAS, or cloud VMs.
+**Goal:** Ship the most advanced, sellable RAG knowledge product: GraphRAG-native,
+streaming-generated, audit-ready, and packaged as Personal → Professional → Enterprise → Mega SKUs.
 
 ---
 
-## Start Knowledge Studio
+## Primary build
+
+```bash
+make product-mega-smoke   # capped validation
+make product-mega         # full 100M+ commercial build (cluster)
+```
+
+Config: `config/product_mega.yaml`
+
+---
+
+## Commercial docs
+
+- [Product overview](../commercial/product-overview.md)
+- [SKU matrix](../commercial/sku-matrix.md)
+- [Datasheet](../commercial/datasheet.md)
+- [EULA](../../EULA.md)
+
+---
+
+## Self-hosted Studio (bundled)
 
 ```bash
 pip install -e .
-coltex serve                  # self-hosted on LAN (default profile)
-coltex deploy                 # show access URLs
+coltex serve
+coltex deploy
 ```
 
----
-
-## Deployment
-
-See [docs/deployment/self-hosted.md](../deployment/self-hosted.md)
-
-Config: `config/deployment.yaml`
+See [self-hosted deployment](../deployment/self-hosted.md)
 
 ---
 
 ## License
 
-MIT — see [LICENSE](../../LICENSE).
+- Engine: MIT
+- Commercial dataset: EULA + Mega license

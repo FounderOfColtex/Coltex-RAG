@@ -1,4 +1,4 @@
-"""Mega-scale topic expansion for Coltex corpus generation."""
+"""Mega-scale topic expansion for Coltex Mega RAG corpus generation."""
 
 from __future__ import annotations
 
@@ -6,6 +6,9 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 
 from corpus_templates import Topic
+
+# Commercial floor for the Mega SKU (100,000,000+ sellable files)
+COMMERCIAL_MEGA_FLOOR = 100_000_000
 
 SERVICE_PREFIXES = (
     "auth", "billing", "catalog", "checkout", "search", "indexer", "ingestion",
@@ -42,15 +45,29 @@ class MegaTier:
     aspects: int
     variant_multiplier: int
     description: str
+    commercial_floor: int = 0
 
 
 def resolve_mega_tier(mega_multiplier: int) -> MegaTier:
+    """Map multiplier → generation tier.
+
+    The commercial Mega SKU uses multiplier >= 100_000_000 (mega_plus) and is
+    designed to produce at least COMMERCIAL_MEGA_FLOOR (100M+) documents when
+    uncapped on a cluster build.
+    """
     if mega_multiplier >= 100_000_000_000:
         return MegaTier("hyper", 10_000, 1_000, len(MEGA_ASPECTS), 100,
-                        "Hyper — billions of documents (Vast.ai cluster)")
+                        "Hyper — billions of documents (Vast.ai cluster)",
+                        commercial_floor=COMMERCIAL_MEGA_FLOOR)
     if mega_multiplier >= 1_000_000_000:
         return MegaTier("ultra", 1_000, 500, len(MEGA_ASPECTS), 50,
-                        "Ultra — hundreds of millions")
+                        "Ultra — hundreds of millions to billions",
+                        commercial_floor=COMMERCIAL_MEGA_FLOOR)
+    if mega_multiplier >= 100_000_000:
+        # Primary commercial Mega RAG tier — 100,000,000+ sellable files
+        return MegaTier("mega_plus", 200, 150, len(MEGA_ASPECTS), 32,
+                        "Mega Plus — 100,000,000+ commercial RAG documents",
+                        commercial_floor=COMMERCIAL_MEGA_FLOOR)
     if mega_multiplier >= 1_000_000:
         return MegaTier("mega", 100, 100, 20, 24, "Mega — tens of millions")
     if mega_multiplier >= 10_000:

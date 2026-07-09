@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build $1000+ premium hyper-scale RAG dataset."""
+"""Build Coltex Mega RAG — commercial 100,000,000+ document corpus."""
 
 from __future__ import annotations
 
@@ -9,7 +9,8 @@ import sys
 from pathlib import Path
 
 PREMIUM_STEPS = [
-    ("stream_premium_corpus", "Stream premium distributable corpus"),
+    ("stream_premium_corpus", "Stream Mega RAG commercial corpus"),
+    ("build_marketplace_packs", "Build sellable marketplace pack catalog"),
     ("validate_quality", "Validate quality gates"),
     ("build_benchmarks", "Build benchmark datasets"),
     ("build_manifest", "Build product manifest"),
@@ -26,11 +27,12 @@ def run_step(script: str, config: Path, extra: list[str] | None = None) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build premium hyper-scale RAG dataset")
-    parser.add_argument("--config", type=Path, default=Path("config/product_hyper.yaml"))
+    parser = argparse.ArgumentParser(description="Build Coltex Mega RAG commercial dataset (100M+)")
+    parser.add_argument("--config", type=Path, default=Path("config/product_mega.yaml"))
     parser.add_argument("--max-files", type=int, default=None)
     parser.add_argument("--skip-embeddings", action="store_true")
     parser.add_argument("--skip-eval", action="store_true", default=True)
+    parser.add_argument("--skip-marketplace", action="store_true")
     args = parser.parse_args()
 
     extra = []
@@ -40,6 +42,8 @@ def main() -> None:
     run_step("stream_premium_corpus", args.config, extra or None)
 
     for script, _ in PREMIUM_STEPS[1:]:
+        if args.skip_marketplace and script == "build_marketplace_packs":
+            continue
         run_step(script, args.config)
 
     if not args.skip_embeddings:
@@ -48,7 +52,7 @@ def main() -> None:
     if not args.skip_eval:
         run_step("evaluate_rag", args.config)
 
-    print("\nPremium RAG dataset build complete.")
+    print("\nColtex Mega RAG commercial build complete (target: 100,000,000+ files).")
 
 
 if __name__ == "__main__":

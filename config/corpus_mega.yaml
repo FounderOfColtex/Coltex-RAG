@@ -1,4 +1,4 @@
-# MEGA Coltex corpus — hyper-scale generation
+# Coltex Mega RAG corpus — commercial 100M+ generation
 # mega_multiplier maps to tiers (see scripts/mega_scale.py)
 
 seed_dir: knowledge-base
@@ -6,13 +6,16 @@ output_dir: knowledge-base/generated
 
 scale: 10000
 variations_per_doc: 24
-mega_multiplier: 100000000000   # hyper tier → billions of documents
+mega_multiplier: 100000000   # mega_plus tier → 100,000,000+ commercial documents
+target_documents: 100000000
 parallel_workers: 16
 batch_size: 1000
 
 # Set max_files via CLI: --max-files 100000 (safety cap)
-# Full hyper run on Vast.ai:
+# Full Mega commercial run on Vast.ai:
 #   python3 scripts/generate_corpus.py --config config/corpus_mega.yaml --max-files 0 --skip-wiring
+# Preferred product path:
+#   make product-mega
 
 categories:
   - rag

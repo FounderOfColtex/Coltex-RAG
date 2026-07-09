@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Load Coltex commercial RAG vector dataset artifacts."""
+"""Load Coltex Mega RAG commercial dataset artifacts (100M+ SKU)."""
 
 from __future__ import annotations
 
@@ -28,7 +28,11 @@ def main() -> None:
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         print("=== Manifest ===")
-        summary = {k: manifest[k] for k in ("name", "version", "tier", "license", "documents", "documents_generated", "chunks_generated") if k in manifest}
+        summary = {k: manifest[k] for k in (
+            "name", "version", "tier", "sku", "license", "tagline",
+            "documents", "documents_generated", "chunks_generated",
+            "estimated_total_documents", "meets_100m_commercial_floor", "sellable",
+        ) if k in manifest}
         print(json.dumps(summary, indent=2))
         if "artifacts" in manifest:
             print("Artifacts:", json.dumps({k: v.get("records") for k, v in manifest["artifacts"].items()}, indent=2))

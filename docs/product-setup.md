@@ -1,42 +1,57 @@
-# Coltex — Setup Guide
+# Coltex Mega RAG — Setup Guide
 
-Build, expand, and query the Coltex knowledge base.
+Build, sell, and query the Coltex Mega RAG commercial corpus (100,000,000+ files).
 
 ## Install
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+pip install -e .
 ```
 
-## Bootstrap the corpus
+## Validate commercial pipeline (smoke)
+
+```bash
+make product-mega-smoke
+python3 examples/load_dataset.py
+make audit-distribution
+```
+
+## Full Mega build (100M+)
+
+Requires cluster storage/CPU (e.g. Vast.ai):
+
+```bash
+make product-mega
+# equivalent:
+python3 scripts/product/build_premium_product.py --config config/product_mega.yaml
+```
+
+## Marketplace packs
+
+```bash
+make marketplace-packs
+cat data/product/marketplace/packs.json
+```
+
+## Bootstrap curated seed (optional)
 
 ```bash
 make corpus-advanced
 make corpus-mega
 make expand-curated-kb COUNT=500
-make corpus-report
 ```
 
-## Build knowledge base
-
-```bash
-make product
-make index
-make audit-distribution
-python3 examples/load_dataset.py
-```
-
-## Use the CLI
+## Query / Studio
 
 ```bash
 python3 -m runtime status
-python3 -m runtime upload path/to/document.pdf
 python3 -m runtime ask "your question"
-python3 -m runtime search "query"
-python3 -m runtime dashboard
+coltex serve
 ```
 
 ## License
 
-MIT — see [LICENSE](../LICENSE).
+- Engine: MIT — [LICENSE](../LICENSE)
+- Commercial dataset: [EULA.md](../EULA.md)

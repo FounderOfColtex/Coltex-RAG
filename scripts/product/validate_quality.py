@@ -78,6 +78,13 @@ def validate_license_files(cfg: dict) -> dict:
     if dist_cfg.get("require_notice", True):
         if not (ROOT / "NOTICE").exists():
             issues.append("Missing root NOTICE file")
+    if dist_cfg.get("require_eula", False):
+        eula = ROOT / dist_cfg.get("license_path", "EULA.md")
+        if not eula.exists():
+            issues.append(f"Missing commercial EULA: {eula.name}")
+        commercial = dist_cfg.get("commercial_license_path") or cfg.get("commercial_license")
+        if commercial and not (ROOT / commercial).exists():
+            issues.append(f"Missing commercial license file: {commercial}")
 
     return {"passed": not issues, "issues": issues}
 

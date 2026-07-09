@@ -110,19 +110,27 @@ def main() -> None:
     }
 
     manifest = {
-        "name": cfg.get("name", "Coltex Product"),
-        "version": str(cfg.get("version", "1.0.0")),
-        "tier": cfg.get("tier", "standard"),
+        "name": cfg.get("name", "Coltex Mega RAG"),
+        "version": str(cfg.get("version", "5.0.0")),
+        "tier": cfg.get("tier", "mega"),
+        "sku": cfg.get("sku", "MEGA-100M"),
+        "tagline": cfg.get("tagline", "The largest commercial RAG corpus — 100,000,000+ sellable knowledge files"),
         "price_usd": cfg.get("price_usd"),
-        "license": cfg.get("license", "MIT"),
+        "license": cfg.get("license", "EULA"),
+        "license_path": cfg.get("license_path", cfg.get("distribution", {}).get("license_path", "EULA.md")),
+        "commercial_license": cfg.get("commercial_license", "MEGA-LICENSE.md"),
+        "engine_license": "MIT",
         "updated": str(cfg.get("updated", datetime.now(timezone.utc).strftime("%Y-%m-%d"))),
         "built_at": datetime.now(timezone.utc).isoformat(),
         "curated_only": cfg["quality"].get("curated_only", True),
         "streaming_mode": streaming,
-        "content_origin": gen_stats.get("content_origin", "original_synthetic"),
+        "sellable": bool(cfg.get("generation", {}).get("sellable", cfg.get("tier") in {"mega", "mega_smoke", "hyper"})),
+        "target_documents": cfg.get("generation", {}).get("target_documents", 100_000_000),
+        "content_origin": gen_stats.get("content_origin", "coltex_mega_rag_synthetic"),
         "third_party_docs_copied": gen_stats.get("third_party_docs_copied", False),
         "mega_multiplier": gen_stats.get("mega_multiplier"),
         "estimated_total_documents": gen_stats.get("estimated_total_documents"),
+        "meets_100m_commercial_floor": gen_stats.get("meets_100m_commercial_floor"),
         "documents_generated": gen_stats.get("documents_generated", catalog_count),
         "chunks_generated": gen_stats.get("chunks_generated", files.get("chunks", {}).get("records")),
         "excluded_paths": [
@@ -134,7 +142,18 @@ def main() -> None:
         "artifacts": files,
         "benchmarks_dir": cfg["benchmarks"]["output_dir"],
         "generation_stats": gen_stats,
+        "marketplace": cfg.get("marketplace", {}),
     }
+
+    marketplace_path = resolve_path(out_cfg.get("marketplace_catalog", "data/product/marketplace/packs.json"))
+    if marketplace_path.exists():
+        files["marketplace_packs"] = {
+            "path": str(marketplace_path.relative_to(resolve_path("."))),
+            "sha256": file_sha256(marketplace_path),
+            "records": None,
+            "bytes": marketplace_path.stat().st_size,
+        }
+        manifest["artifacts"] = files
 
     manifest_path = resolve_path(out_cfg["manifest"])
     manifest_path.parent.mkdir(parents=True, exist_ok=True)

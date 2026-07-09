@@ -1,19 +1,26 @@
-# Coltex hyper-scale knowledge base build
+# Legacy alias — prefer config/product_mega.yaml (Coltex Mega RAG 100M+)
 
-name: Coltex Hyper Knowledge Base
-version: 2.1.0
-license: MIT
-updated: 2026-07-08
+name: Coltex Mega RAG (Hyper Alias)
+version: 5.0.0
+tier: mega
+sku: MEGA-100M
+license: EULA
+license_path: EULA.md
+commercial_license: MEGA-LICENSE.md
+updated: 2026-07-09
+tagline: The largest commercial RAG corpus — 100,000,000+ sellable knowledge files
 
-# Hyper-scale generation (procedural streaming — no memory blowup)
+# Mega-scale generation (procedural streaming — no memory blowup)
 generation:
-  mega_multiplier: 100000000000    # 100 billion× tier
+  mega_multiplier: 100000000       # mega_plus → 100M+ commercial documents
   scale: 10000
-  variations_per_doc: 32
+  variations_per_doc: 24
   max_files: 0                     # 0 = uncapped (run on Vast.ai)
+  target_documents: 100000000
   sample_md_files: 10000           # audit samples written to disk
   sample_dir: knowledge-base/distributable/_samples
   streaming: true
+  sellable: true
   categories:
     - rag
     - graphrag
@@ -81,6 +88,9 @@ distribution:
   require_license: true
   require_provenance: true
   require_notice: true
+  require_eula: true
+  license_path: EULA.md
+  commercial_license_path: MEGA-LICENSE.md
   forbidden_body_markers:
     - "This document provides detailed information on"
   min_substantive_chars: 200

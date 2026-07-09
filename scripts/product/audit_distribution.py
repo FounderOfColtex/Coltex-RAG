@@ -29,6 +29,12 @@ def check_required_files(dist_cfg: dict) -> dict:
         required.append(("knowledge-base/PROVENANCE.md", ROOT / "knowledge-base" / "PROVENANCE.md"))
     if dist_cfg.get("require_notice", True):
         required.append(("NOTICE", ROOT / "NOTICE"))
+    if dist_cfg.get("require_eula", False):
+        eula_name = dist_cfg.get("license_path", "EULA.md")
+        required.append((eula_name, ROOT / eula_name))
+        commercial = dist_cfg.get("commercial_license_path")
+        if commercial:
+            required.append((commercial, ROOT / commercial))
 
     for label, path in required:
         if not path.exists():

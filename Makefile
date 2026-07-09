@@ -1,8 +1,8 @@
 .PHONY: install clean index retrieve stats report \
         corpus corpus-advanced corpus-grow corpus-mega corpus-report \
-        product product-hyper product-hyper-smoke \
+        product product-mega product-mega-smoke product-hyper product-hyper-smoke \
         chunks deduplicate validate-product export-graph embeddings benchmarks \
-        manifest evaluate audit-distribution \
+        manifest evaluate audit-distribution marketplace-packs \
         runtime-status runtime-dashboard runtime-health runtime-curator \
         runtime-events runtime-knowledge runtime-ask runtime-upload \
         runtime-monitor runtime-explain runtime-connector runtime-sources runtime-settings
@@ -114,7 +114,7 @@ generate-smoke:
 
 generate-mega:
 	python3 scripts/generate_corpus.py --config config/corpus_mega.yaml \
-		--mega-multiplier 1000000 --max-files 100000 --skip-wiring --workers 8
+		--mega-multiplier 100000000 --max-files 100000 --skip-wiring --workers 8
 
 generate-ultra:
 	python3 scripts/generate_corpus.py --config config/corpus_mega.yaml \
@@ -127,14 +127,25 @@ generate-hyper:
 expand-curated-kb:
 	python3 scripts/expand_curated_kb.py --count $(or $(COUNT),120)
 
+# Commercial Mega RAG product (100,000,000+ sellable files)
 product:
 	python3 scripts/product/build_product.py
 
+product-mega-smoke:
+	python3 scripts/product/build_premium_product.py --config config/product_mega_smoke.yaml --skip-embeddings
+
+product-mega:
+	python3 scripts/product/build_premium_product.py --config config/product_mega.yaml
+
+# Legacy aliases → Mega commercial configs
 product-hyper-smoke:
-	python3 scripts/product/build_premium_product.py --config config/product_hyper_smoke.yaml --skip-embeddings
+	python3 scripts/product/build_premium_product.py --config config/product_mega_smoke.yaml --skip-embeddings
 
 product-hyper:
-	python3 scripts/product/build_premium_product.py --config config/product_hyper.yaml
+	python3 scripts/product/build_premium_product.py --config config/product_mega.yaml
+
+marketplace-packs:
+	python3 scripts/product/build_marketplace_packs.py --config config/product_mega.yaml
 
 chunks:
 	python3 scripts/product/chunk_documents.py

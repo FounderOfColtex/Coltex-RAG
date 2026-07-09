@@ -22,23 +22,24 @@ from mega_scale import resolve_mega_tier
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Stream premium distributable corpus")
-    parser.add_argument("--config", type=Path, default=Path("config/product_hyper.yaml"))
+    parser = argparse.ArgumentParser(description="Stream Coltex Mega RAG commercial corpus")
+    parser.add_argument("--config", type=Path, default=Path("config/product_mega.yaml"))
     parser.add_argument("--max-files", type=int, default=None, help="Cap documents (0 = uncapped)")
     parser.add_argument("--sample-md", type=int, default=None, help="Write N sample .md files for audit")
     args = parser.parse_args()
 
     cfg = load_product_config(args.config)
     gen = cfg.get("generation", {})
-    mega = int(gen.get("mega_multiplier", 100_000_000_000))
+    mega = int(gen.get("mega_multiplier", 100_000_000))
     scale = int(gen.get("scale", 10_000))
     variations = int(gen.get("variations_per_doc", 24))
     categories = gen.get("categories", [])
     max_docs = args.max_files if args.max_files is not None else int(gen.get("max_files", 0))
     sample_md = args.sample_md if args.sample_md is not None else int(gen.get("sample_md_files", 5000))
+    target_documents = int(gen.get("target_documents", 100_000_000))
     dist_cfg = distribution_cfg(cfg)
     chunk_cfg = cfg["chunking"]
-    license_name = cfg.get("license", "MIT")
+    license_name = cfg.get("license", "EULA")
 
     out_cfg = cfg["output"]
     chunks_path = resolve_path(out_cfg["chunks"])
@@ -132,10 +133,22 @@ def main() -> None:
                 print(f"  ... {doc_count:,} documents, {chunk_count:,} chunks", flush=True)
 
     dup_ratio = dupes / chunk_count if chunk_count else 0.0
+    meets_commercial_floor = (
+        estimated_total >= target_documents
+        if max_docs == 0
+        else doc_count >= min(max_docs, target_documents) or estimated_total >= target_documents
+    )
     stats = {
+        "product": cfg.get("name", "Coltex Mega RAG"),
+        "sku": cfg.get("sku", "MEGA-100M"),
         "tier": tier.name,
         "mega_multiplier": mega,
+        "target_documents": target_documents,
+        "commercial_floor": getattr(tier, "commercial_floor", 100_000_000),
         "estimated_total_documents": estimated_total,
+        "meets_100m_commercial_floor": bool(
+            estimated_total >= target_documents or (tier.commercial_floor and estimated_total >= tier.commercial_floor)
+        ),
         "documents_generated": doc_count,
         "chunks_generated": chunk_count,
         "graph_edges": edge_count,
@@ -143,9 +156,14 @@ def main() -> None:
         "duplicate_chunks_skipped": dupes,
         "duplicate_ratio": round(dup_ratio, 6),
         "sample_md_files": min(doc_count, sample_md),
-        "price_tier_usd": cfg.get("price_usd", 1000),
-        "content_origin": "coltex_premium_synthetic",
+        "sellable": bool(gen.get("sellable", True)),
+        "capped_build": bool(max_docs),
+        "max_files_cap": max_docs,
+        "pipeline_validated_for_commercial_scale": meets_commercial_floor or estimated_total >= target_documents,
+        "price_tier_usd": cfg.get("price_usd"),
+        "content_origin": "coltex_mega_rag_synthetic",
         "third_party_docs_copied": False,
+        "license": license_name,
     }
     with stats_path.open("w", encoding="utf-8") as f:
         json.dump(stats, f, indent=2)

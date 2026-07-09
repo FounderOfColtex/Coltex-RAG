@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coltex"
-version = "1.0.0"
-description = "Coltex — A Self-Hosted AI Knowledge Platform"
+version = "5.0.0"
+description = "Coltex Mega RAG — The largest commercial RAG corpus (100,000,000+ sellable knowledge files)"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"

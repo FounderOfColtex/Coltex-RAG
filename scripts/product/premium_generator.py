@@ -175,12 +175,13 @@ def build_premium_metadata(
         "category": topic.category,
         "doc_type": doc_type,
         "hub": topic.hub or topic.category,
-        "tags": list(dict.fromkeys([topic.category, doc_type, topic.difficulty, "premium", "distributable"])),
+        "tags": list(dict.fromkeys([topic.category, doc_type, topic.difficulty, "mega", "sellable", "distributable"])),
         "difficulty": topic.difficulty,
         "related": related_ids or [],
-        "license": "MIT",
-        "origin": "coltex_premium_synthetic",
+        "license": "EULA",
+        "origin": "coltex_mega_rag_synthetic",
         "variant": variant,
+        "commercial": True,
     }
 
 

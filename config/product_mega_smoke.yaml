@@ -1,6 +1,6 @@
-# Legacy alias — prefer config/product_mega_smoke.yaml
+# Coltex Mega RAG — smoke test (capped commercial validation)
 
-name: Coltex Mega RAG (Smoke Alias)
+name: Coltex Mega RAG (Smoke)
 version: 5.0.0-smoke
 tier: mega_smoke
 sku: MEGA-SMOKE
@@ -14,7 +14,7 @@ generation:
   mega_multiplier: 100000000
   scale: 10000
   variations_per_doc: 24
-  max_files: 25000
+  max_files: 25000                 # capped for CI / laptop validation
   target_documents: 100000000
   sample_md_files: 1000
   sample_dir: knowledge-base/distributable/_samples

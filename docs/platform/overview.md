@@ -1,28 +1,31 @@
 # Coltex Platform Overview
 
-**Coltex — The Knowledge Operating System for AI**
+**Coltex Mega RAG — The largest commercial RAG corpus (100,000,000+ sellable files)**
 
-The **Coltex Runtime** is the live platform centerpiece. Documentation describes the vision; the runtime executes it.
+Coltex is a commercial mega-scale RAG product with a GraphRAG-native runtime.
+The **Mega Dataset** (100M+ documents) is the primary sellable deliverable; the
+**Coltex Runtime** indexes, retrieves, and operates over it.
 
 ```bash
+make product-mega-smoke
 python3 -m runtime status
 ```
 
-Runtime docs: [runtime.md](runtime.md)
+Commercial docs: [product overview](../commercial/product-overview.md) · Runtime: [runtime.md](runtime.md)
 
 ---
 
 ## The shift
 
-| Storage-centric | Intelligence-centric |
-|-----------------|---------------------|
+| Commodity RAG | Coltex Mega RAG |
+|---------------|-----------------|
+| Small curated dumps | **100,000,000+** sellable knowledge files |
+| Flat vector index | GraphRAG hubs + typed relationships |
+| One-off export | SKUs, marketplace packs, EULA |
 | Store → Retrieve | Understand → Connect → Reason → Retrieve → Improve |
-| Index documents | Intelligence Engine improves the corpus |
-| Search metrics | Knowledge Health operational scores |
-| Static corpus | Knowledge Lifecycle (Created → Published → Archived) |
-| Monolithic codebase | Extensible plugins, hooks, and event subscribers |
+| Static corpus | Knowledge Lifecycle + Intelligence Engine |
 
-The **enterprise RAG vector dataset** remains a foundation deliverable. The **Knowledge Intelligence Engine** is the heart.
+The **Mega RAG commercial dataset** is the foundation deliverable. The **Knowledge Intelligence Engine** is the operational heart.
 
 ---
 
@@ -50,10 +53,12 @@ The **enterprise RAG vector dataset** remains a foundation deliverable. The **Kn
 
 ### Available today
 
-- **Knowledge dataset** — 13k+ documents, 83k+ chunks, 52k+ graph edges
-- **Knowledge graph** — hubs, routes, 20 relationship types, GraphRAG
+- **Mega RAG commercial product** — 100,000,000+ document target, sellable SKUs & packs
+- **Streaming corpus pipeline** — `make product-mega` / `product-mega-smoke`
+- **Knowledge graph** — hubs, routes, typed relationships, GraphRAG
 - **Search & retrieval** — hybrid RAG with GraphRouter
-- **Quality & audit** — distribution audit, benchmarks, provenance
+- **Quality & audit** — distribution audit, EULA, benchmarks, provenance
+- **Marketplace packs** — RAG core, languages, cloud, security, architecture
 - **Memory tier model** — working, episodic, semantic, procedural (corpus)
 
 ### On the roadmap
@@ -87,17 +92,18 @@ See [Knowledge OS](knowledge-os.md) · [Intelligence Engine](intelligence-engine
 
 | Segment | Primary value |
 |---------|---------------|
-| **Enterprise IT / Knowledge managers** | Knowledge OS with health, lifecycle, governance |
-| **AI / ML teams** | Reasoning layer + intelligence over RAG corpus |
-| **Platform engineering** | Event-driven, extensible knowledge infrastructure |
+| **AI / ML teams** | Instant 100M+ RAG corpus with GraphRAG edges |
+| **Platform vendors** | Embed / resell licensed marketplace packs |
+| **Enterprises** | Private Mega RAG + Knowledge OS governance |
+| **Data marketplaces** | Shard sales under Coltex EULA |
 | **Compliance / Legal** | Provenance, audit trail, retention policies |
-| **DevOps / SRE** | Living docs, scheduler, connector sync (roadmap) |
 
 ---
 
 ## Related documents
 
-- [Knowledge OS](knowledge-os.md) — product vision
+- [Commercial product overview](../commercial/product-overview.md) — Mega RAG packaging
+- [SKU matrix](../commercial/sku-matrix.md) — pricing & packs
+- [Knowledge OS](knowledge-os.md) — platform vision
 - [Intelligence Engine](intelligence-engine.md) — core intelligence architecture
 - [Platform roadmap](roadmap.md) — feature specifications
-- [Product overview](../commercial/product-overview.md) — commercial packaging
