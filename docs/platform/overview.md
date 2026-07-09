@@ -1,9 +1,9 @@
 # Coltex Platform Overview
 
-**Coltex Mega RAG — The largest commercial RAG corpus (100,000,000+ sellable files)**
+**Coltex Mega RAG — Commercial RAG corpus (100,000,000+ documents)**
 
 Coltex is a commercial mega-scale RAG product with a GraphRAG-native runtime.
-The **Mega Dataset** (100M+ documents) is the primary sellable deliverable; the
+The **Mega Dataset** (100M+ documents) is the primary commercial deliverable; the
 **Coltex Runtime** indexes, retrieves, and operates over it.
 
 ```bash
@@ -15,17 +15,17 @@ Commercial docs: [product overview](../commercial/product-overview.md) · Runtim
 
 ---
 
-## The shift
+## Positioning
 
 | Commodity RAG | Coltex Mega RAG |
 |---------------|-----------------|
-| Small curated dumps | **100,000,000+** sellable knowledge files |
+| Small curated dumps | **100,000,000+** knowledge documents |
 | Flat vector index | GraphRAG hubs + typed relationships |
 | One-off export | SKUs, marketplace packs, EULA |
 | Store → Retrieve | Understand → Connect → Reason → Retrieve → Improve |
-| Static corpus | Knowledge Lifecycle + Intelligence Engine |
+| Static corpus | Knowledge lifecycle + intelligence engine |
 
-The **Mega RAG commercial dataset** is the foundation deliverable. The **Knowledge Intelligence Engine** is the operational heart.
+The **Mega RAG commercial dataset** is the foundation deliverable. The **intelligence engine** is the operational core.
 
 ---
 
@@ -33,9 +33,9 @@ The **Mega RAG commercial dataset** is the foundation deliverable. The **Knowled
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Knowledge Studio · Governance · Lifecycle · Extensibility      │
+│  Console · Governance · Lifecycle · Extensibility               │
 ├─────────────────────────────────────────────────────────────────┤
-│  ★ Knowledge Intelligence Engine · Knowledge Health · AI Memory   │
+│  ★ Intelligence Engine · Knowledge Health · AI Memory           │
 ├─────────────────────────────────────────────────────────────────┤
 │  Reasoning Layer (intent → plan → retrieve → rank → evidence)   │
 ├─────────────────────────────────────────────────────────────────┤
@@ -53,25 +53,25 @@ The **Mega RAG commercial dataset** is the foundation deliverable. The **Knowled
 
 ### Available today
 
-- **Mega RAG commercial product** — 100,000,000+ document target, sellable SKUs & packs
+- **Mega RAG commercial product** — 100,000,000+ document target, commercial SKUs and packs
 - **Streaming corpus pipeline** — `make product-mega` / `product-mega-smoke`
 - **Knowledge graph** — hubs, routes, typed relationships, GraphRAG
-- **Search & retrieval** — hybrid RAG with GraphRouter
-- **Quality & audit** — distribution audit, EULA, benchmarks, provenance
+- **Search and retrieval** — hybrid RAG with GraphRouter
+- **Quality and audit** — distribution audit, EULA, benchmarks, provenance
 - **Marketplace packs** — RAG core, languages, cloud, security, architecture
 - **Memory tier model** — working, episodic, semantic, procedural (corpus)
 
 ### On the roadmap
 
-- **Knowledge Intelligence Engine** — discover, detect, recommend, improve
+- **Intelligence Engine** — discover, detect, recommend, improve
 - **Knowledge Health** — operational dashboard scores
-- **Event system & scheduler** — event-driven pipeline, automated jobs
+- **Event system and scheduler** — event-driven pipeline, automated jobs
 - **Reasoning layer** — full intent-to-evidence pipeline
-- **Knowledge lifecycle & AI governance** — state machine, retention, audit
+- **Knowledge lifecycle and AI governance** — state machine, retention, audit
 - **Extensibility** — plugins, hooks, SDK
-- **Knowledge Studio, connectors, sync** — experience and integration layer
+- **Console, connectors, sync** — experience and integration layer
 
-See [Knowledge OS](knowledge-os.md) · [Intelligence Engine](intelligence-engine.md) · [Roadmap](roadmap.md)
+See [Knowledge architecture](knowledge-os.md) · [Intelligence Engine](intelligence-engine.md) · [Roadmap](roadmap.md)
 
 ---
 
@@ -88,13 +88,13 @@ See [Knowledge OS](knowledge-os.md) · [Intelligence Engine](intelligence-engine
 
 ---
 
-## Target buyers
+## Buyers
 
 | Segment | Primary value |
 |---------|---------------|
-| **AI / ML teams** | Instant 100M+ RAG corpus with GraphRAG edges |
-| **Platform vendors** | Embed / resell licensed marketplace packs |
-| **Enterprises** | Private Mega RAG + Knowledge OS governance |
+| **AI / ML teams** | 100M+ RAG corpus with GraphRAG edges |
+| **Platform vendors** | Licensed marketplace packs |
+| **Enterprises** | Private Mega RAG with governance controls |
 | **Data marketplaces** | Shard sales under Coltex EULA |
 | **Compliance / Legal** | Provenance, audit trail, retention policies |
 
@@ -103,7 +103,7 @@ See [Knowledge OS](knowledge-os.md) · [Intelligence Engine](intelligence-engine
 ## Related documents
 
 - [Commercial product overview](../commercial/product-overview.md) — Mega RAG packaging
-- [SKU matrix](../commercial/sku-matrix.md) — pricing & packs
-- [Knowledge OS](knowledge-os.md) — platform vision
-- [Intelligence Engine](intelligence-engine.md) — core intelligence architecture
+- [SKU matrix](../commercial/sku-matrix.md) — SKUs and packs
+- [Knowledge architecture](knowledge-os.md) — platform vision
+- [Intelligence Engine](intelligence-engine.md) — intelligence architecture
 - [Platform roadmap](roadmap.md) — feature specifications

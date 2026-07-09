@@ -1,23 +1,22 @@
 # Coltex
 
-**The largest commercial RAG corpus — 100,000,000+ sellable knowledge files.**
+**Commercial RAG corpus — 100,000,000+ documents for production retrieval systems.**
 
-Coltex Mega RAG is an advanced, GraphRAG-native knowledge product: a streaming-generated,
-embedding-ready corpus designed to power production retrieval systems and to be sold as
-domain packs, industry shards, and the full **Mega (100M+)** SKU.
+Coltex Mega RAG is a GraphRAG-ready knowledge corpus: streaming-generated, embedding-ready,
+and packaged for commercial distribution as domain packs and the full Mega SKU.
 
 ---
 
-## What you get
+## Deliverables
 
-| Deliverable | Description |
-|-------------|-------------|
-| **100M+ documents** | Commercial Mega floor — original synthetic knowledge files |
-| **Vector chunks** | Metadata-rich JSONL for any vector store |
+| Artifact | Description |
+|----------|-------------|
+| **Document corpus** | 100,000,000+ original synthetic knowledge documents |
+| **Vector chunks** | Metadata-rich JSONL for vector stores |
 | **Knowledge graph** | Typed edges for GraphRAG routing |
-| **Marketplace packs** | Sellable domain packs (RAG, languages, cloud, security, architecture) |
-| **Benchmarks** | FAQ, retrieval gold, RAG eval sets |
-| **Audit trail** | Provenance, EULA, distribution compliance |
+| **Marketplace packs** | Domain packs (RAG, languages, cloud, security, architecture) |
+| **Benchmarks** | FAQ pairs, retrieval gold sets, RAG evaluation sets |
+| **Compliance** | Provenance, EULA, distribution audit |
 
 Commercial packaging: [docs/commercial/product-overview.md](docs/commercial/product-overview.md) · [SKU matrix](docs/commercial/sku-matrix.md)
 
@@ -32,7 +31,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e .
 
-# Validate the Mega commercial pipeline (capped smoke build)
+# Validate the Mega commercial pipeline (capped build)
 make product-mega-smoke
 
 # Inspect artifacts
@@ -40,7 +39,7 @@ python3 examples/load_dataset.py
 make audit-distribution
 ```
 
-Full Mega build (cluster / Vast.ai — uncapped 100M+):
+Full Mega build (cluster — uncapped 100M+):
 
 ```bash
 make product-mega
@@ -50,26 +49,26 @@ make product-mega
 
 ## Commercial SKUs
 
-| SKU | Scale | Price |
-|-----|-------|-------|
-| Personal | ~25k sample | $79 |
-| Professional | 1M–10M domain packs | $999 |
-| Enterprise | 10M–50M multi-domain | Custom |
-| **Mega** | **100,000,000+** | Custom |
+| SKU | Scale | License |
+|-----|-------|---------|
+| Personal | Sample pack (~25k) | Personal + EULA |
+| Professional | Domain packs (1M–10M) | Professional + EULA |
+| Enterprise | Multi-domain (10M–50M) | Enterprise + EULA |
+| **Mega** | **100,000,000+** | Mega + EULA |
 
 Licenses: [EULA.md](EULA.md) · [MEGA-LICENSE.md](MEGA-LICENSE.md) · [PERSONAL-LICENSE.md](PERSONAL-LICENSE.md) · [PROFESSIONAL-LICENSE.md](PROFESSIONAL-LICENSE.md) · [ENTERPRISE-LICENSE.md](ENTERPRISE-LICENSE.md)
 
-Engine source remains **MIT** ([LICENSE](LICENSE)).
+Runtime source remains **MIT** ([LICENSE](LICENSE)).
 
 ---
 
 ## Marketplace packs
 
-Sell individually or bundle into SKUs — see [config/marketplace.yaml](config/marketplace.yaml):
+Available individually or bundled — see [config/marketplace.yaml](config/marketplace.yaml):
 
-- `pack-rag-core` — RAG / GraphRAG / embeddings / retrieval
+- `pack-rag-core` — RAG, GraphRAG, embeddings, retrieval
 - `pack-languages` — Python, JS/TS, Go, Rust, Java, C#, SQL
-- `pack-cloud-devops` — AWS, Azure, GCP, K8s, Terraform, CI/CD
+- `pack-cloud-devops` — AWS, Azure, GCP, Kubernetes, Terraform, CI/CD
 - `pack-security-sre` — Security, observability, incidents
 - `pack-architecture` — Microservices, DDD, APIs, data stores
 
@@ -79,10 +78,10 @@ make marketplace-packs
 
 ---
 
-## Self-hosted Knowledge Studio (included)
+## Runtime
 
 ```bash
-coltex serve                  # LAN default — http://<server-ip>:8080
+coltex serve                  # web console — http://<server-ip>:8080
 coltex deploy                 # show access URLs
 ```
 
@@ -95,30 +94,30 @@ Docker: `docker compose up -d` — guide: [docs/deployment/self-hosted.md](docs/
 
 ---
 
-## Why Coltex Mega RAG is advanced
+## Capabilities
 
-1. **Hyper-scale streaming** — never loads 100M files into memory
-2. **GraphRAG-native** — hubs + typed relationships on every document
-3. **Hybrid retrieval ready** — dense vectors + metadata filters
+1. **Streaming generation** — memory-safe corpus builds at Mega scale
+2. **GraphRAG-native** — hubs and typed relationships on every document
+3. **Hybrid retrieval** — dense vectors with metadata filters
 4. **Quality gates** — substance checks, duplicate caps, commercial audit
-5. **Sellable by design** — SKUs, packs, catalog, and EULA from day one
+5. **Commercial packaging** — SKUs, packs, catalog, and EULA
 6. **Evaluation harness** — recall@k and metadata accuracy benchmarks
 
 ---
 
-## Docs
+## Documentation
 
 | Doc | Purpose |
 |-----|---------|
-| [Commercial overview](docs/commercial/product-overview.md) | Buyer-facing product |
-| [Datasheet](docs/commercial/datasheet.md) | Spec sheet |
-| [SKU matrix](docs/commercial/sku-matrix.md) | Pricing & packs |
-| [Platform overview](docs/platform/overview.md) | Runtime & intelligence |
-| [Product setup](docs/product-setup.md) | Build & query |
+| [Commercial overview](docs/commercial/product-overview.md) | Product packaging |
+| [Datasheet](docs/commercial/datasheet.md) | Technical specification |
+| [SKU matrix](docs/commercial/sku-matrix.md) | SKUs and packs |
+| [Platform overview](docs/platform/overview.md) | Runtime architecture |
+| [Product setup](docs/product-setup.md) | Build and query |
 
 ---
 
 ## License
 
-- **Engine / runtime:** MIT — [LICENSE](LICENSE)
+- **Runtime:** MIT — [LICENSE](LICENSE)
 - **Commercial Mega RAG dataset:** [EULA.md](EULA.md)

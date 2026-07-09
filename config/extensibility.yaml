@@ -38,7 +38,7 @@ plugin_types:
     manifest: config/governance.yaml
 
   - id: ui_extension
-    description: Knowledge Studio panels and widgets
+    description: Coltex Console panels and widgets
     examples: [custom_health_widget, connector_status_panel]
 
 # Event hooks — subscribe to any event in config/events.yaml
